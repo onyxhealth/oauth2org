@@ -60,6 +60,9 @@ class UserProfile(models.Model):
     birth_date = models.DateField(blank=True, null=True)
     most_recent_id_token_payload = models.TextField(
         blank=True, default="", max_length=4096)
+
+    verifying_agent_email = models.EmailField(default="")
+
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -147,3 +150,7 @@ class UserProfile(models.Model):
     @property
     def doc(self):
         return "[]"
+
+    @property
+    def verifying_agent_email(self):
+        return self.verifying_agent_email
