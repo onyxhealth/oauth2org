@@ -193,7 +193,7 @@ def patient_search(access_token, user_profile):
         user_profile.user.last_name,
         user_profile.user.first_name,
         user_profile.middle_name,
-        settings.HIE_WORKBENCH_USERNAME,
+        user_profile.verifying_agent_email,
     )
     # print(patient_search_xml)
 
