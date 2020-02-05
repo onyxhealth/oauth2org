@@ -167,6 +167,13 @@ def acquire_access_token():
 
 def patient_search(access_token, user_profile):
     """search for a patient with the given profile; if found, return """
+    # If paitent was created before verifying email added, append default
+    auditEmail = ""
+    if user_profile.verifying_agent_email == "":
+        auditEmail = settings.HIE_WORKBENCH_USERNAME
+    else:
+        auditEmail = user_profile.verifying_agent_email
+
     patient_search_xml = """
        <PatientSearchPayLoad>
             <PatGender>%s</PatGender>
@@ -193,7 +200,7 @@ def patient_search(access_token, user_profile):
         user_profile.user.last_name,
         user_profile.user.first_name,
         user_profile.middle_name,
-        user_profile.verifying_agent_email,
+        auditEmail,
     )
     # print(patient_search_xml)
 
