@@ -551,18 +551,29 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
+        'logging.handlers.SysLigHandler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.SysLogHandler',
+            'facility': 'local7',
+            'formatter': 'verbose',
+            'address': '/dev/log',
+        }
     },
     'loggers': {
         # root logger
         'smh':{
-            'handlers': ['console'],
+            'handlers': ['console', 'logging.handlers.SysLogHandler'],
+            'propagate': True,
             'level': 'INFO',
-            'disabled': False
+            'formatter': 'verbose',
+            'disabled': False,
         },
         'smh_debug': {
-            'handlers': ['console'],
+            'handlers': ['console', 'logging.handlers.SysLogHandler'],
             'level': 'DEBUG',
-            'propagate': False,
+            'formatter': 'verbose',
+            'propagate': True,
+            
         },
     },
 }
