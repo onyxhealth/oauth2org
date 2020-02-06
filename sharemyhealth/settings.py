@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 import dj_database_url
+import logging
+
 from django.contrib.messages import constants as messages
 from getenv import env
 from django.utils.translation import ugettext_lazy as _
@@ -564,3 +566,6 @@ LOGGING = {
         },
     },
 }
+
+logger = logging.getLogger('smh_debug')
+logger.debug("XXXX We got logging to syslog")
