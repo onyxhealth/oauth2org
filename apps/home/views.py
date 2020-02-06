@@ -1,4 +1,5 @@
 import logging
+from django.conf import settings
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from jwkest.jwt import JWT
@@ -13,6 +14,7 @@ from django.urls import reverse
 _author_ = "Alan Viars"
 
 logger = logging.getLogger('smh_debug')
+
 
 @login_required
 def fetch_cda(request):
@@ -94,6 +96,6 @@ def authenticated_home(request):
         context = {'name': name}
         template = 'index.html'
 
-        logger.debug("XXXX We got logging to syslog")
+        logger.debug("XXXX We got logging to syslog for %s:%s" % (settings.VPC_ENV, settings.ROLE_TYPE))
 
     return render(request, template, context)

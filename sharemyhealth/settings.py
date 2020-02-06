@@ -524,6 +524,9 @@ AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION', 'us-east-1')
 EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES = env(
     'EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES', "EC2_PARAMSTORE")
 
+VPC_ENV = env('VPC_ENV',"UNKNOWN")
+ROLE_TYPE = env('ROLE_TYPE', "NOT_SET")
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -537,7 +540,7 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%(process)-5d %(thread)d %(name)-50s %(levelname)-8s %(message)s'
+            'format': '%s:%s %(process)-5d %(thread)d %(name)-50s %(levelname)-8s %(message)s' % (VPC_ENV, ROLE_TYPE)
         },
         'simple': {
             'format': '[%(asctime)s] %(name)s %(levelname)s %(message)s',
