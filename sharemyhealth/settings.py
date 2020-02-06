@@ -540,7 +540,7 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%s:%s %(process)-5d %(thread)d %(name)-50s %(levelname)-8s %(message)s' % (VPC_ENV, ROLE_TYPE)
+            'format': '%(process)-5d %(thread)d %(name)-50s %(levelname)-8s %(message)s'
         },
         'simple': {
             'format': '[%(asctime)s] %(name)s %(levelname)s %(message)s',
