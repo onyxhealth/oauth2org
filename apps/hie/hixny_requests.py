@@ -9,7 +9,7 @@ from .models import HIEProfile
 from ..accounts.models import UserProfile
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('smh_debug')
 
 
 def write_key_to_filepath(filepath, env_to_write):
