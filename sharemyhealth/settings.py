@@ -551,7 +551,7 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        'logging.handlers.SysLigHandler': {
+        'logging.handlers.SysLogHandler': {
             'level': 'DEBUG',
             'class': 'logging.handlers.SysLogHandler',
             'facility': 'local7',
@@ -573,7 +573,7 @@ LOGGING = {
             'level': 'DEBUG',
             'formatter': 'verbose',
             'propagate': True,
-            
+
         },
     },
 }
