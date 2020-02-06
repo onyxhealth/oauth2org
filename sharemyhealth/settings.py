@@ -540,10 +540,10 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%(process)-5d %(thread)d %(name)-50s %(levelname)-8s %(message)s'
+            'format': 'env:' + VPC_ENV + ':' + ROLE_TYPE + ' %(process)-5d %(thread)d %(name)-50s %(levelname)-8s %(message)s'
         },
         'simple': {
-            'format': '[%(asctime)s] %(name)s %(levelname)s %(message)s',
+            'format': '[%(asctime)s] ' + VPC_ENV + ':' + ROLE_TYPE + '%(name)s %(levelname)s %(message)s',
             'datefmt': '%d/%b/%Y %H:%M:%S'
         },
     },
@@ -580,6 +580,3 @@ LOGGING = {
         },
     },
 }
-
-logger = logging.getLogger('smh_debug')
-logger.debug("XXXX We got logging to syslog")

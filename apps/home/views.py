@@ -96,6 +96,6 @@ def authenticated_home(request):
         context = {'name': name}
         template = 'index.html'
 
-        logger.debug("XXXX We got logging to syslog for %s:%s" % (settings.VPC_ENV, settings.ROLE_TYPE))
+        logger.debug("XXXX We got logging to syslog for %s:%s")
 
     return render(request, template, context)
