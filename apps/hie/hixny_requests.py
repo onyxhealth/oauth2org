@@ -202,7 +202,8 @@ def patient_search(access_token, user_profile):
         user_profile.middle_name,
         auditEmail,
     )
-    # print(patient_search_xml)
+    print("Patient Search Payload: ")
+    print(patient_search_xml)
 
     response = requests.post(
         settings.HIE_PHRREGISTER_API_URI,
@@ -225,7 +226,8 @@ def patient_search(access_token, user_profile):
 
     response_xml = etree.XML(response.content)
     result = {"response_body": etree.tounicode(response_xml, pretty_print=True)}
-    # print(result['response_body'])
+    print("Response Body: ")
+    print(result['response_body'])
 
     for element in response_xml:
         if element.tag == "{%(hl7)s}Notice" % NAMESPACES:
