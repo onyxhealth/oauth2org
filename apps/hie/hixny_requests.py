@@ -148,6 +148,7 @@ def acquire_access_token():
         auth=HTTPBasicAuth('password-client', settings.HIE_BASIC_AUTH_PASSWORD),
     )
     response_json = response.json()
+    logger.debug(response_json)
     if 'access_token' not in response_json:
         access_token = None
         error_message = _(
