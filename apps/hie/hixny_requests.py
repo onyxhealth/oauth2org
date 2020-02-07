@@ -59,6 +59,7 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
 
         # if the member hasn't been enrolled (no HIEProfile.mrn), try to enroll
         if not hie_profile.mrn:
+            logger.debug("No MRN")
             # try to find the member
             search_data = patient_search(access_token, user_profile)
             if 'response_body' in search_data:
@@ -100,6 +101,7 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
 
         # if the consumer directive checks out, get the clinical data and store
         # it
+        logger.debug("MRN Set")
         directive = consumer_directive(access_token, hie_profile, user_profile)
         if 'response_body' in directive:
             result['responses'].append(directive['response_body'])
@@ -116,7 +118,7 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
             if settings.DEBUG and directive.get('error'):
                 result['error'] += " (%s)" % directive['error'] or ''
 
-    logger.debug("result = %r", result)
+    logger.debug("result = %r" % ( result ))
     return result
 
 
@@ -202,7 +204,7 @@ def patient_search(access_token, user_profile):
         user_profile.middle_name,
         auditEmail,
     )
-    logger.debug("patient search payload = %r", patient_search_xml)
+    logger.debug("patient search payload = %r" (patient_search_xml))
 
     response = requests.post(
         settings.HIE_PHRREGISTER_API_URI,
@@ -225,7 +227,7 @@ def patient_search(access_token, user_profile):
 
     response_xml = etree.XML(response.content)
     result = {"response_body": etree.tounicode(response_xml, pretty_print=True)}
-    logger.debug("response body = %r", result['response_body'])
+    logger.debug("response body = %r" (result['response_body']))
 
     for element in response_xml:
         if element.tag == "{%(hl7)s}Notice" % NAMESPACES:
