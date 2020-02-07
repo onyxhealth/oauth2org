@@ -576,7 +576,10 @@ LOGGING = {
             'level': 'DEBUG',
             'formatter': 'verbose',
             'propagate': True,
-
         },
+        '': {
+            'handlers': ['console', 'logging.handlers.SysLogHandler'],
+            'level': 'DEBUG'
+            }
     },
 }
