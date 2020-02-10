@@ -36,7 +36,7 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
     returns values that can be used to update the user's HIEProfile
     """
     logger.debug("fetch_patient_data(%r, hie_profile=%r, user_profile=%r)"
-        % (user, hie_profile, user_profile))
+                 % (user, hie_profile, user_profile))
     result = {'responses': []}
 
     if hie_profile is None:
