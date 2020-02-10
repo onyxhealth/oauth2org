@@ -228,7 +228,7 @@ def patient_search(access_token, user_profile):
 
     response_xml = etree.XML(response.content)
     result = {"response_body": etree.tounicode(response_xml, pretty_print=True)}
-    logger.debug("response body = %r" (result['response_body']))
+    logger.debug("response body = %r" % (result['response_body']))
 
     for element in response_xml:
         if element.tag == "{%(hl7)s}Notice" % NAMESPACES:
