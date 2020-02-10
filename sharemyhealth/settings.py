@@ -238,6 +238,7 @@ SOCIAL_AUTH_PIPELINE = [
     'social_core.pipeline.user.user_details',
     'apps.accounts.pipeline.oidc.save_profile',
     'apps.fhirproxy.pipeline.identifiers_to_crosswalk.set_crosswalk_with_id_token',
+    'apps.verifymyidentity.pipeline.save_profile.save_profile',
 ]
 
 if DEBUG:

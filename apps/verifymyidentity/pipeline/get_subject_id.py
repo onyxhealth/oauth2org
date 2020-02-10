@@ -13,5 +13,6 @@ def get_username(strategy, details, backend, user, response, *args, **kwargs):
             id_token = response.get('id_token')
             parsed_id_token = JWT().unpack(id_token)
             payload = parsed_id_token.payload()
-            return {'username': payload['sub']}
+            return {'username': payload['sub'],
+                   'verifying_agent_email': payload['verifying_agent_email']}
     return
