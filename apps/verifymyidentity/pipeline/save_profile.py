@@ -3,7 +3,10 @@
 # vim: ai ts=4 sts=4 et sw=4
 
 from jwkest.jwt import JWT
-from ..models import UserProfile
+from ...accounts.models import UserProfile
+import logging
+
+logging = logger.getLogger('smh_debug')
 
 __author__ = "Alan Viars"
 
@@ -20,3 +23,6 @@ def save_profile(backend, user, response, *args, **kwargs):
             profile.verifying_agent_email = id_token_payload.get(
                 'verifying_agent_email')
             profile.save()
+            logger.debug('Verifying Agent Email set as %r from %r' % 
+                         (profile.verifying_agent_email,
+                         id_token_payload.get("verifying_agent_email")))
