@@ -6,7 +6,7 @@ from jwkest.jwt import JWT
 from ...accounts.models import UserProfile
 import logging
 
-logging = logger.getLogger('smh_debug')
+logger = logger.getLogger('smh_debug')
 
 __author__ = "Alan Viars"
 
