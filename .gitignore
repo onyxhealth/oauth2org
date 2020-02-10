@@ -113,3 +113,4 @@ sitestatic/.DS_Store*
 client-cert.pem
 client-private-key.pem
 testdata
+/.vs
