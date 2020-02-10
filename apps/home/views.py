@@ -1,5 +1,5 @@
 import logging
-from django.conf import settings
+# from django.conf import settings
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from jwkest.jwt import JWT

@@ -525,7 +525,7 @@ AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION', 'us-east-1')
 EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES = env(
     'EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES', "EC2_PARAMSTORE")
 
-VPC_ENV = env('VPC_ENV',"UNKNOWN")
+VPC_ENV = env('VPC_ENV', "UNKNOWN")
 ROLE_TYPE = env('ROLE_TYPE', "NOT_SET")
 
 LOGGING = {
@@ -565,7 +565,7 @@ LOGGING = {
     },
     'loggers': {
         # root logger
-        'smh':{
+        'smh': {
             'handlers': ['console', 'logging.handlers.SysLogHandler'],
             'propagate': True,
             'level': 'INFO',
@@ -581,6 +581,6 @@ LOGGING = {
         '': {
             'handlers': ['console', 'logging.handlers.SysLogHandler'],
             'level': 'DEBUG'
-            }
+        }
     },
 }

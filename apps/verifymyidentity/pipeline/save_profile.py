@@ -25,4 +25,4 @@ def save_profile(backend, user, response, *args, **kwargs):
             profile.save()
             logger.debug('Verifying Agent Email set as %r from %r' % 
                          (profile.verifying_agent_email,
-                         id_token_payload.get("verifying_agent_email")))
+                          id_token_payload.get("verifying_agent_email")))
