@@ -205,7 +205,7 @@ def patient_search(access_token, user_profile):
         user_profile.middle_name,
         auditEmail,
     )
-    logger.debug("patient search payload = %r" (patient_search_xml))
+    logger.debug("patient search payload = %r" % (patient_search_xml))
 
     response = requests.post(
         settings.HIE_PHRREGISTER_API_URI,
