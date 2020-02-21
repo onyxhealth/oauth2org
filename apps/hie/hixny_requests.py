@@ -9,7 +9,7 @@ from .models import HIEProfile
 from ..accounts.models import UserProfile
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('smh_debug')
 
 
 def write_key_to_filepath(filepath, env_to_write):
@@ -35,10 +35,8 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
     """do what we need to do to fetch patient data from HIXNY, if possible, for the given user.
     returns values that can be used to update the user's HIEProfile
     """
-    logger.debug(
-        "fetch_patient_data(%r, hie_profile=%r, user_profile=%r)"
-        % (user, hie_profile, user_profile)
-    )
+    logger.debug("fetch_patient_data(%r, hie_profile=%r, user_profile=%r)"
+                 % (user, hie_profile, user_profile))
     result = {'responses': []}
 
     if hie_profile is None:
@@ -59,6 +57,7 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
 
         # if the member hasn't been enrolled (no HIEProfile.mrn), try to enroll
         if not hie_profile.mrn:
+            logger.debug("No MRN")
             # try to find the member
             search_data = patient_search(access_token, user_profile)
             if 'response_body' in search_data:
@@ -100,6 +99,7 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
 
         # if the consumer directive checks out, get the clinical data and store
         # it
+        logger.debug("MRN Set")
         directive = consumer_directive(access_token, hie_profile, user_profile)
         if 'response_body' in directive:
             result['responses'].append(directive['response_body'])
@@ -116,7 +116,7 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
             if settings.DEBUG and directive.get('error'):
                 result['error'] += " (%s)" % directive['error'] or ''
 
-    logger.debug("result = %r", result)
+    logger.debug("result = %r" % (result))
     return result
 
 
@@ -146,6 +146,7 @@ def acquire_access_token():
         auth=HTTPBasicAuth('password-client', settings.HIE_BASIC_AUTH_PASSWORD),
     )
     response_json = response.json()
+    logger.debug(response_json)
     if 'access_token' not in response_json:
         access_token = None
         error_message = _(
@@ -167,6 +168,13 @@ def acquire_access_token():
 
 def patient_search(access_token, user_profile):
     """search for a patient with the given profile; if found, return """
+    # If paitent was created before verifying email added, append default
+    auditEmail = ""
+    if user_profile.verifying_agent_email == "":
+        auditEmail = settings.HIE_WORKBENCH_USERNAME
+    else:
+        auditEmail = user_profile.verifying_agent_email
+
     patient_search_xml = """
        <PatientSearchPayLoad>
             <PatGender>%s</PatGender>
@@ -193,9 +201,9 @@ def patient_search(access_token, user_profile):
         user_profile.user.last_name,
         user_profile.user.first_name,
         user_profile.middle_name,
-        settings.HIE_WORKBENCH_USERNAME,
+        auditEmail,
     )
-    # print(patient_search_xml)
+    logger.debug("patient search payload = %r" % (patient_search_xml))
 
     response = requests.post(
         settings.HIE_PHRREGISTER_API_URI,
@@ -218,7 +226,7 @@ def patient_search(access_token, user_profile):
 
     response_xml = etree.XML(response.content)
     result = {"response_body": etree.tounicode(response_xml, pretty_print=True)}
-    # print(result['response_body'])
+    logger.debug("response body = %r" % (result['response_body']))
 
     for element in response_xml:
         if element.tag == "{%(hl7)s}Notice" % NAMESPACES:
