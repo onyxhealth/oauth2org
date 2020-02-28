@@ -76,8 +76,10 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
                 # member found
                 hie_profile.terms_accepted = search_data.get('terms_accepted')
                 hie_profile.terms_string = search_data.get('terms_string')
-                hie_profile.stageuser_password = search_data.get('stageuser_password')
-                hie_profile.stageuser_token = search_data.get('stageuser_token')
+                hie_profile.stageuser_password = search_data.get(
+                    'stageuser_password')
+                hie_profile.stageuser_token = search_data.get(
+                    'stageuser_token')
                 hie_profile.save()
 
                 # try to stage/activate the member
@@ -86,7 +88,8 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
                 )
                 print('activated_member_data:', activated_member_data)
                 if 'response_body' in activated_member_data:
-                    result['responses'].append(activated_member_data['response_body'])
+                    result['responses'].append(
+                        activated_member_data['response_body'])
 
                 if (
                     activated_member_data.get('mrn')
@@ -95,7 +98,8 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
                     hie_profile.mrn = activated_member_data['mrn']
                     hie_profile.save()
 
-                print({k: v for k, v in hie_profile.__dict__.items() if k[0] != '_'})
+                print(
+                    {k: v for k, v in hie_profile.__dict__.items() if k[0] != '_'})
 
         # if the consumer directive checks out, get the clinical data and store
         # it
@@ -143,7 +147,8 @@ def acquire_access_token():
         ),
         data=data,
         verify=False,
-        auth=HTTPBasicAuth('password-client', settings.HIE_BASIC_AUTH_PASSWORD),
+        auth=HTTPBasicAuth(settings.HIE_BASIC_AUTH_USERNAME,
+                           settings.HIE_BASIC_AUTH_PASSWORD),
     )
     response_json = response.json()
     logger.debug(response_json)
@@ -169,11 +174,11 @@ def acquire_access_token():
 def patient_search(access_token, user_profile):
     """search for a patient with the given profile; if found, return """
     # If paitent was created before verifying email added, append default
-    auditEmail = ""
-    if user_profile.verifying_agent_email == "":
-        auditEmail = settings.HIE_WORKBENCH_USERNAME
-    else:
-        auditEmail = user_profile.verifying_agent_email
+    # auditEmail = ""
+    # if user_profile.verifying_agent_email == "":
+    #     auditEmail = settings.HIE_WORKBENCH_USERNAME
+    # else:
+    #     auditEmail = user_profile.verifying_agent_email
 
     patient_search_xml = """
        <PatientSearchPayLoad>
@@ -201,7 +206,7 @@ def patient_search(access_token, user_profile):
         user_profile.user.last_name,
         user_profile.user.first_name,
         user_profile.middle_name,
-        auditEmail,
+        settings.HIE_WORKBENCH_USERNAME,
     )
     logger.debug("patient search payload = %r" % (patient_search_xml))
 
@@ -225,7 +230,8 @@ def patient_search(access_token, user_profile):
     )
 
     response_xml = etree.XML(response.content)
-    result = {"response_body": etree.tounicode(response_xml, pretty_print=True)}
+    result = {"response_body": etree.tounicode(
+        response_xml, pretty_print=True)}
     logger.debug("response body = %r" % (result['response_body']))
 
     for element in response_xml:
@@ -237,7 +243,8 @@ def patient_search(access_token, user_profile):
             if e.tag == "{%(hl7)s}Notice" % NAMESPACES:
                 result['notice'] = e.text
                 if "ERROR #5001" in result['notice']:
-                    match_data = re.search(r'MRN[:=] ?([0-9]+)\b', result['notice'])
+                    match_data = re.search(
+                        r'MRN[:=] ?([0-9]+)\b', result['notice'])
                     if match_data:
                         result['mrn'] = match_data.group(1)
             if e.tag == "{%(hl7)s}TERMSACCEPTED" % NAMESPACES:
@@ -245,7 +252,8 @@ def patient_search(access_token, user_profile):
             if e.tag == "{%(enrollment)s}TermsString" % NAMESPACES:
                 # the content of TermsString is html
                 e.tag = 'TermsString'  # get rid of namespaces
-                terms_string = ''.join([etree.tounicode(ch, method='xml') for ch in e])
+                terms_string = ''.join(
+                    [etree.tounicode(ch, method='xml') for ch in e])
                 result['terms_string'] = terms_string
             if e.tag == "{%(hl7)s}StageUserPassword" % NAMESPACES:
                 result['stageuser_password'] = e.text
@@ -296,10 +304,12 @@ def activate_staged_user(access_token, hie_profile, user_profile):
     response_content = response.content.decode('utf-8')
     response_xml = etree.XML(response.content)
 
-    result = {"response_body": etree.tounicode(response_xml, pretty_print=True)}
+    result = {"response_body": etree.tounicode(
+        response_xml, pretty_print=True)}
     # print(result['response_body'])
 
-    mrn_elements = response_xml.xpath("//hl7:ActivatedUserMrn", namespaces=NAMESPACES)
+    mrn_elements = response_xml.xpath(
+        "//hl7:ActivatedUserMrn", namespaces=NAMESPACES)
     mrn_match = re.search(r"ActivatedUserMrn>(\d+)<", response_content)
 
     if len(mrn_elements) > 0:
@@ -307,7 +317,8 @@ def activate_staged_user(access_token, hie_profile, user_profile):
         # print('mrn_element =', etree.tounicode(mrn_element))
         result.update(
             status='success',
-            mrn=etree.tounicode(mrn_element, method='text', with_tail=False).strip(),
+            mrn=etree.tounicode(mrn_element, method='text',
+                                with_tail=False).strip(),
         )
     elif mrn_match is not None:
         # print('mrn_match =', mrn_match)
@@ -345,7 +356,7 @@ def consumer_directive(access_token, hie_profile, user_profile):
             """ % (
             hie_profile.mrn,
             user_profile.birthdate_intersystems,
-            hie_profile.data_requestor,
+            user_profile.verifying_agent_email,
             hie_profile.consent_to_share_data,
         )
         # print(consumer_directive_xml)
@@ -369,7 +380,8 @@ def consumer_directive(access_token, hie_profile, user_profile):
             data=consumer_directive_xml,
         )
         response_xml = etree.XML(response.content)
-        result = {"response_body": etree.tounicode(response_xml, pretty_print=True)}
+        result = {"response_body": etree.tounicode(
+            response_xml, pretty_print=True)}
         # print(result['response_body'])
 
         result.update(
@@ -420,7 +432,8 @@ def get_clinical_document(access_token, hie_profile):
     )
     response_xml = etree.XML(response.content)
 
-    result = {"response_body": etree.tounicode(response_xml, pretty_print=True)}
+    result = {"response_body": etree.tounicode(
+        response_xml, pretty_print=True)}
 
     cda_element = response_xml.find("{%(hl7)s}ClinicalDocument" % NAMESPACES)
     if cda_element is not None:
