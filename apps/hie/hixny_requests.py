@@ -356,7 +356,7 @@ def consumer_directive(access_token, hie_profile, user_profile):
             """ % (
             hie_profile.mrn,
             user_profile.birthdate_intersystems,
-            user_profile.verifying_agent_email,
+            hie_profile.data_requestor,
             hie_profile.consent_to_share_data,
         )
         # print(consumer_directive_xml)
