@@ -1,12 +1,17 @@
-# ShareMyHealth - An OAuth2 Provider for Health Care
+# Oauth2.org - An OAuth2 Provider and FHIR Proxy
 
-This project is an OAuth2 Server and FHIR Server.  Here is some
-of what you can do:
+This project is a reusable OAuth2 Server and FHIR Server in Django.
+The repository will change names to OAuth2-org or something similar 
+in the near future. The name change is necessary to avoid 
+confusion between the ShareMyHealthApp and this code base.
+
+Here is some of what you can do:
 
 
-* Use the built in tools to proxy FHIR through OAuth2
+* Use the built in tools to proxy FHIR(or any RESTful API) through OAuth2
 * Register and manage applications (OAuth2 Clients)
 * Connect this service to an upstream OpendID Connect Provider
+* Connect an HIE such as InterSystems and convert CDA2FHIR
 * Build your own! You can build virtually any RESTful API or app
 on top of this base project.
 
@@ -14,8 +19,10 @@ This tool is based off of work done on behalf of the
 Office of the National Coordinator for Health Information
 Technology (HHS ONC) and the  Centers for Medicare and Medicaid
 Services (HHS CMS). It was built provider consumer-facing APIs
-and shares a common code base with the CMS Blue Button 2.0 API.
-See https://bluebutton.cms.gov/ for more details.
+and shares a common code base with the CMS Blue Button 2.0 API,
+but this version is designed for re-use.
+It may be used for business-to-business APIs and is not limited to 
+patient-facing APIs or FHIR.
 
 
 Installation
