@@ -106,7 +106,8 @@ def approve_authorization(request):
     access_token = auth_response['access_token']
 
     # activate member
-    activated_member_data = hixny_requests.activate_staged_user(access_token, hp, up)
+    activated_member_data = hixny_requests.activate_staged_user(
+        access_token, hp, up)
     if activated_member_data['status'] == 'success':
         hp.mrn = activated_member_data['mrn']
         hp.save()
@@ -128,5 +129,3 @@ def approve_authorization(request):
     # Send the terms accepted response...
     context = {}
     return render(request, 'hixny-approve-agreement.html', context)
-
-
