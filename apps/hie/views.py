@@ -128,3 +128,5 @@ def approve_authorization(request):
     # Send the terms accepted response...
     context = {}
     return render(request, 'hixny-approve-agreement.html', context)
+
+

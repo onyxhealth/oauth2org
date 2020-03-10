@@ -434,3 +434,25 @@ def cda2fhir(cda_content):
     )
     fhir_content = response.content
     return fhir_content
+
+
+def get_fhir_resource(member, resourcetype):
+    """
+    Get FHIR Resource if in list of RESOURCES
+    :param member:
+    :param resourcetype:
+    :return:
+    """
+
+    if resourcetype in settings.RESOURCES:
+
+        fhir_data = HIEProfile.fhir_content(user=member)
+
+        if fhir_data:
+            if DEBUG_MODULE:
+                print("we got fhir_data")
+            r_bundle = get_converted_fhir_resource(fhir_data,
+                                                   resourcetype=resourcetype)
+            return r_bundle
+        else:
+            return BUNDLE
