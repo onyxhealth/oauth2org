@@ -5,40 +5,32 @@
     <div class="block-center">
         {% if not error %}
             <form id="authorizationForm" method="post">
-
-                <h5 class="block-center-heading">{% trans "Do you, " %} {{request.user.first_name|title }} {{request.user.last_name|title }}, wish to allow </h5>
-                
-
-                <h1>{{ application.name }}</h1>
-                
-      
-                <p> {% trans "to access your personal information?" %} </p>
+                <h2>Patient Data Access Request from Health Information Exchange of New York (HIXNY)</h2>
+                <h5 class="block-center-heading">Do you wish to allow Share My Health to access your personal health information?</h5>
                 
                 <h4 style="color:red;">Understand the Risks:</h4>
 
-                 <p>You have the right to share your health information, but there may be risks.
-                 Be sure to review the {{ application.name }}'s Privacy Policy and Terms and Conditions.
-                 You can revoke an application's access to your data at any time by logging in to
-                 this site selecting "Revoke" from the Application Access Tokens menu item.
-                 While you may revoke access at anytime, it is not possible to retract information already shared.
-                 </p>
+                <p>
+                    You have the right to share your health information, but there may be risks. Be sure to review the Patient Data Access from Health Information Exchange of New York (HIXNY)'s Privacy Policy and Terms and Conditions. You can revoke (cancel) Share My Health's access to your data at any time by logging in to this site and selecting "Revoke" from the Application Access Tokens menu item. You can also cancel your Share My Health account, which will stop Share My Health's access to your health information held by HIXNY. While you may revoke access at any time, it is not possible to take back information already shared.
+                    When you allow Patient Data Access from HIXNY you and any social service providers you approve receive read-only access to your personal health information. This means that your information cannot be changed or downloaded through Share My Health.
+                </p>
                 
                             
-                 <h4>{{ application.name }} {% trans "requires the following permissions:" %}</h4>
+                 <h4>Your personal health information may include: </h4>
                 
                 <ul>
-                  {% for p in settings.SPECIFIC_PERMISSIONS %}
-                   <li>{{p}}</li>
-                  {% endfor %}
+                    <li>Conditions and Diagnosis</li>
+                    <li>Medications</li>
+                    <li>HIV-related information</li>
+                    <li>Mental health information</li>
+                    <li>Genetic testing information</li>
+                    <li>Sexually transmitted disease information</li>
+                    <li>Reproductive health information, including abortion information</li>
+                    <li>Alcohol and substance abuse treatment information</li>
                 </ul>
 
                 
-                <h4>This may include:</h4>
-                <ul>
-                  {% for i in settings.SPECIFIC_DATA_ITEMS_IN_RESOURCES %}
-                   <li>{{i}}</li>
-                  {% endfor %}
-                </ul>
+                <p>Please note that HIXNY has only <i>some</i> of your personal health information. HIXNY personal health information is not your official or complete medical record.</p>
                   
                 <h4>By clicking "Approve" you also:</h4>
                 
@@ -46,17 +38,17 @@
                 <p></p>
 
                 <ul>
-               
-                   {% for i in settings.SPECIFIC_OTHER_TERMS  %}
-                        <li>{{i}}</li>
-
-                {% endfor %}
+                    <li>Connect this application through your own choice. You should only approve access to applications you trust.</li>
+                    <li>Agree that HIXNY is not responsible for any misuse of personal health information by the application you are approving.</li>
+                    <li>Understand once information is shared in cannot be unshared. HIXNY is unable to retract information shared with this application.</li>
+                    <li>Understand that future data sharing with this application must be explicitly revoked (cancelled) by you by returning to this website or by cancelling your account at Share My Health.</li>
+                    <li>Understand that Share My Health application and the social service organizations that it shares your health information with are likely not covered by the privacy and security protections of <a href="https://www.hhs.gov/hipaa/index.html">HIPAA</a>.</li>
                 </ul>
 
                 <div class="control-group">
                     <div class="controls">
-                        <input type="submit" class="btn btn-large btn-primary" name="allow" value="Allow"/>
-                        <input type="submit" class="btn btn-large" value="Deny"/>
+                        <input type="submit" class="btn btn-large btn-primary" name="allow" value="Yes"/>
+                        <input type="submit" class="btn btn-large" value="No"/>
                         
                     </div>
                 </div>

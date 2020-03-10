@@ -1,3 +1,5 @@
+import logging
+# from django.conf import settings
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from jwkest.jwt import JWT
@@ -10,6 +12,8 @@ from django.http import HttpResponseRedirect, FileResponse
 from django.urls import reverse
 
 _author_ = "Alan Viars"
+
+logger = logging.getLogger('smh_debug')
 
 
 @login_required
@@ -91,4 +95,5 @@ def authenticated_home(request):
         name = ('home')
         context = {'name': name}
         template = 'index.html'
+
     return render(request, template, context)

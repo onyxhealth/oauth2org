@@ -236,6 +236,7 @@ SOCIAL_AUTH_PIPELINE = [
     'social_core.pipeline.user.user_details',
     'apps.accounts.pipeline.oidc.save_profile',
     'apps.fhirproxy.pipeline.identifiers_to_crosswalk.set_crosswalk_with_id_token',
+    'apps.verifymyidentity.pipeline.save_profile.save_profile',
 ]
 
 if DEBUG:
@@ -414,6 +415,8 @@ SETTINGS_EXPORT = [
     'SPECIFIC_OTHER_TERMS',
     'TOP_LEFT_TITLE',
     'KILLER_APP_URI',
+    'RESOURCES',
+    'VITALSIGNS'
 ]
 
 
@@ -435,7 +438,7 @@ HIE_GETDOCUMENT_API_URI = "%s/GETDOCUMENT" % (HIE_PATIENT_API_URI)
 HIE_WORKBENCH_USERNAME = env('HIE_WORKBENCH_USERNAME', '')
 HIE_WORKBENCH_PASSWORD = env('HIE_WORKBENCH_PASSWORD', '')
 HIE_BASIC_AUTH_PASSWORD = env('HIE_BASIC_AUTH_PASSWORD', '')
-
+HIE_BASIC_AUTH_USERNAME = env('HIE_BASIC_AUTH_USERNAME', '')
 
 HIE_CLIENT_CERT = env('HIE_CLIENT_CERT', """
 -----BEGIN CERTIFICATE-----
@@ -521,3 +524,93 @@ AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION', 'us-east-1')
 # Blank means skip EC2.
 EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES = env(
     'EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES', "EC2_PARAMSTORE")
+
+
+RESOURCES = ['Account', 'ActivityDefinition', 'AllergyIntolerance', 'AdverseEvent', 'Appointment',
+             'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle',
+             'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse',
+             'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest',
+             'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent',
+             'Contract', 'Coverage', 'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent',
+             'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest',
+             'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint',
+             'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile',
+             'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition',
+             'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy',
+             'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage',
+             'List', 'Location', 'Measure', 'MeasureReport', 'Media',
+             'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest',
+             'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem',
+             'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome',
+             'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation',
+             'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure',
+             'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance',
+             'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson',
+             'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'RiskAssessment',
+             'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen',
+             'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery',
+             'SupplyRequest', 'Task', 'TestScript', 'TestReport', 'ValueSet', 'VisionPrescription']
+
+VITALSIGNS = ['3141-9', '8302-2', '39156-5',
+              '8480-6', '8462-4', '8867-4', '8310-5', '9279-1']
+
+VPC_ENV = env('VPC_ENV', "UNKNOWN")
+ROLE_TYPE = env('ROLE_TYPE', "NOT_SET")
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(process)-5d %(thread)d %(name)-50s env:' + VPC_ENV + ':' + ROLE_TYPE + ' %(levelname)-8s %(message)s'
+        },
+        'simple': {
+            'format': '[%(asctime)s] %(name)s env:' + VPC_ENV + ':' + ROLE_TYPE + '%(levelname)s %(message)s',
+            'datefmt': '%d/%b/%Y %H:%M:%S'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'logging.handlers.SysLogHandler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.SysLogHandler',
+            'facility': 'local7',
+            'formatter': 'verbose',
+            'address': '/dev/log',
+        }
+    },
+    'loggers': {
+        # root logger
+        'smh': {
+            'handlers': ['console', 'logging.handlers.SysLogHandler'],
+            'propagate': True,
+            'level': 'INFO',
+            'formatter': 'verbose',
+            'disabled': False,
+        },
+        'smh_debug': {
+            'handlers': ['console', 'logging.handlers.SysLogHandler'],
+            'level': 'DEBUG',
+            'formatter': 'verbose',
+            'propagate': True,
+        },
+        '': {
+            'handlers': ['console', 'logging.handlers.SysLogHandler'],
+            'level': 'DEBUG'
+        }
+    },
+}
+

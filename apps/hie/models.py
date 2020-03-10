@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from ..accounts.models import UserProfile
+from .fhir_requests import get_converted_fhir_resource
 from django.conf import settings
+import json
 # Copyright Videntity Systems Inc.
 __author__ = "Alan Viars"
 
@@ -60,3 +62,10 @@ class HIEProfile(models.Model):
     @property
     def terms_string_stripped(self):
         return self.terms_string.strip('\\n').strip('\\t')
+
+    @property
+    def get_fhir_resource(self, fhir_resource_name):
+        jc = json.loads(self.fhir_content)
+        cv = get_converted_fhir_resource(jc, fhir_resource_name)
+        print(cv)
+        return cv
