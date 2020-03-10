@@ -549,5 +549,5 @@ RESOURCES = ['Account', 'ActivityDefinition', 'AllergyIntolerance', 'AdverseEven
              'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery',
              'SupplyRequest', 'Task', 'TestScript', 'TestReport', 'ValueSet', 'VisionPrescription']
 
-VITALSIGNS = ['3141-9','8302-2','39156-5','8480-6','8462-4','8867-4', '8310-5','9279-1']
-
+VITALSIGNS = ['3141-9', '8302-2', '39156-5',
+              '8480-6', '8462-4', '8867-4', '8310-5', '9279-1']
