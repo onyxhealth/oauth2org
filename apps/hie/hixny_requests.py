@@ -11,6 +11,8 @@ from ..accounts.models import UserProfile
 
 logger = logging.getLogger('smh_debug')
 
+__author__ = "Alan Viars"
+
 
 def write_key_to_filepath(filepath, env_to_write):
     # try and open the local file. Create it from an env var if it doesn't exist.
