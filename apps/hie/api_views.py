@@ -12,7 +12,7 @@ from collections import OrderedDict
 from .models import HIEProfile
 from ..accounts.models import UserProfile
 from . import hixny_requests
-
+from .fhir_requests import get_converted_fhir_resource, get_lab_results, get_vital_signs
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +69,66 @@ def get_patient_fhir_content_test(request):
     up, g_o_c = UserProfile.objects.get_or_create(user=user)
     hp = HIEProfile.objects.get(user=user)
     return JsonResponse(json.loads(hp.fhir_content))
+
+
+@require_GET
+@login_required
+def get_fhir_resource_bundle_test(request, fhir_resource_name="all"):
+
+    user = request.user
+    hp = HIEProfile.objects.get(user=user)
+    cd = get_converted_fhir_resource(json.loads(
+        hp.fhir_content), resourcetype=fhir_resource_name)
+    return JsonResponse(cd)
+
+
+@require_GET
+@protected_resource()
+def get_fhir_resource_bundle(request, fhir_resource_name="all"):
+    owner = request.resource_owner
+    hp, g_o_c = HIEProfile.objects.get_or_create(user=owner)
+    cd = get_converted_fhir_resource(json.loads(
+        hp.fhir_content), resourcetype=fhir_resource_name)
+    return JsonResponse(cd)
+
+
+@require_GET
+@login_required
+def get_fhir_vital_signs_bundle_test(request):
+
+    user = request.user
+    hp = HIEProfile.objects.get(user=user)
+    cd = get_vital_signs(json.loads(hp.fhir_content))
+    return JsonResponse(cd)
+
+
+@require_GET
+@protected_resource()
+def get_fhir_vital_signs_bundle(request):
+
+    owner = request.resource_owner
+    hp, g_o_c = HIEProfile.objects.get_or_create(user=owner)
+    cd = get_vital_signs(json.loads(hp.fhir_content))
+    return JsonResponse(cd)
+
+
+@require_GET
+@login_required
+def get_fhir_lab_results_bundle_test(request):
+
+    user = request.user
+    hp = HIEProfile.objects.get(user=user)
+    cd = get_lab_results(json.loads(hp.fhir_content))
+    return JsonResponse(cd)
+
+
+@require_GET
+@protected_resource()
+def get_fhir_lab_results_bundle(request):
+    owner = request.resource_owner
+    hp, g_o_c = HIEProfile.objects.get_or_create(user=owner)
+    cd = get_lab_results(json.loads(hp.fhir_content))
+    return JsonResponse(cd)
 
 
 @require_GET

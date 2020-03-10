@@ -39,27 +39,41 @@
      <li>patient_id: {{userinfo.patient}} </li>
      <li>given_name: {{request.user.first_name}}  </li>
      <li>family_name: {{request.user.last_name }}   </li>
+					
      </ul>
     
 <p>The access_token and some other values have been saved to the session and will expire in a few minutes.
 After they expire you will need to go through Authorization process again.
     
     
-     <h2>Clicking the following links will cause this test client to make API calls</h1>
+     <h2>Try some API calls</h1>
 					
-					<p>NOTE:  These links may require configuration before working properly. These links are only examples.
-					Build your own APIs on top of this open source project, and consider contributing your code back.</p>
-				
-     <ul>
-     <li> OpenID Connect User Profile <a target="_blank" href="{% url 'test_userinfo' %}">OIDC Profile</a></li>
-					<li> HIE Sourced CDA2FHIR <a target="_blank" href="{% url 'test_patient_everything_bundle' %}">Patient Everything Bundle</a></li> 
-     <li> FHIR Proxy:HAPI/Microsoft Azure/etc.<a target="_blank" href="{% url 'test_eob' %}">ExplanationOfBenefit</a> </li>
-     <li> FHIR Proxy:HAPI/Microsoft Azure/etc.<a target="_blank" href="{% url 'test_patient' %}">Patient</a> </li>
-     <li> FHIR Proxy:HAPI/Microsoft Azure/etc.<a target="_blank" href="{% url 'test_coverage' %}">Coverage</a> </li>
-					<li> FHIR Proxy:HAPI/Microsoft Azure/etc.<a target="_blank" href="{% url 'test_condition' %}">Condition</a> </li>
 
-     <li> <a target="_blank" href="{% url 'fhir_metadata_uri' %}">FHIR Metadata </a> (No Token Needed) </li>
-     <li> <a target="_blank"  href="{% url 'oauth_authorization_server' %}">OAuth2 Discovery</a> (No Token Needed) </li>
+     <ul>
+     <li>FHIR Patient Everything Bundle 
+					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_patient_fhir_content' %}"</pre>
+					</li>
+					
+     <li>FHIR Resource Specific Bundle (Practitioner resource provided as an example)
+					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_resource_bundle' 'Practitioner' %}"</pre>
+					</li>
+
+     <li>FHIR VitalSigns Specific Bundle 
+					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_vital_signs_bundle' %}"</pre>
+					</li>
+
+     <li>FHIR LabResults Bundle 
+					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_lab_results_bundle' %}"</pre>
+					</li>
+
+     <li>User Profile
+					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'user_profile' %}"</pre>
+					</li>
+
+     <li>OAuth2 Discovery
+					<pre>curl "{{settings.HOSTNAME_URL}}{% url 'oauth_authorization_server' %}"</pre>
+					</li>
+				
 
      </ul>
      
