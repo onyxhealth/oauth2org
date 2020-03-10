@@ -150,7 +150,3 @@ class UserProfile(models.Model):
     @property
     def doc(self):
         return "[]"
-
-    #@property
-    #def verifying_agent_email(self):
-    #    return self.verifying_agent_email
