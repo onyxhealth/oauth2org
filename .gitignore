@@ -114,3 +114,9 @@ client-cert.pem
 client-private-key.pem
 testdata
 /.vs
+/smh_env
+/obj/Debug
+/bin
+/sharemyhealth.pyproj
+/sharemyhealth.pyproj.user
+/sharemyhealth.sln

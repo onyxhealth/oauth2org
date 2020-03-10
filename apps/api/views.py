@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework import (
     renderers,
 )
-from rest_framework_xml.renderers import XMLRenderer
 import os
 from oauth2_provider.decorators import protected_resource
 from django.views.decorators.http import require_GET
@@ -20,7 +19,7 @@ class CDAExample(APIView):
 
     # authentication_classes = (authentication.TokenAuthentication,)
     renderer_classes = (renderers.BrowsableAPIRenderer,
-                        renderers.JSONRenderer, XMLRenderer, )
+                        renderers.JSONRenderer)
 
     def get_data(self):
         data = OrderedDict()
