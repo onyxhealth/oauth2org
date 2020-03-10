@@ -38,12 +38,8 @@ test redirect_uri callback function {% url 'testclient-callback' %} will do this
  </p>
      <h1>API Calls</h1>
      <ul>
-     <li> <a target="_blank" href="{% url 'test_userinfo' %}">Profile </a> (OIDC Userinfo)</li>
      <li> <a target="_blank" href="{% url 'oauth_authorization_server' %}">Discovery </a>(No Token Needed) </li>
      </ul>
-    {% if not request.user.is_authenticated %}
-      <h2><a href="{% url 'mfa_login' %}">Login to the developer portal</a> </h1>
-     {% endif %}
     
 </body>
 
