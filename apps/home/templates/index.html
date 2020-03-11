@@ -30,15 +30,47 @@
                     
                 
                     <h2>Welcome to the {{ settings.APPLICATION_TITLE }}</h2>
+                    <br><br>
                     
+                   
+                <h4>Application Programming Interfaces (APIs)</h4>
+                 <br>
+                <p>These APIs are configured for this instance.</p>
+                 <br><br>
+                <ul>
+                <li>FHIR Patient Everything Bundle | <a href="https://www.hl7.org/fhir/operation-patient-everything.html">docs</a>
+                               <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'get_patient_fhir_content' %}"</pre>
+                               </li>
+                               
+                <li>FHIR Resource Specific Bundle (Practitioner resource provided as an example)
+                               <pre>curl -H "Authorization: Bearer some-user-bound-token"{{settings.HOSTNAME_URL}}{% url 'get_fhir_resource_bundle' 'Practitioner' %}"</pre>
+                               </li>
+           
+                <li>FHIR VitalSigns Specific Bundle 
+                               <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_vital_signs_bundle' %}"</pre>
+                               </li>
+           
+                <li>FHIR LabResults Bundle 
+                               <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_lab_results_bundle' %}"</pre>
+                               </li>
+           
+                <li>User Profile | <a href="https://openid.net/specs/openid-connect-core-1_0.html#UserInfo">docs</a>
+                               <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'user_profile' %}"</pre>
+                               </li>
+           
+                <li>OAuth2 Discovery | <a href="https://tools.ietf.org/html/rfc8414">docs</a>
+                               <pre>curl "{{settings.HOSTNAME_URL}}{% url 'oauth_authorization_server' %}"</pre>
+                               </li>
+                           
+                </ul>      
+            
+            <br>
                     <h4>For Developers</h4>
-                    <p>3rd party applications (OAuth2 clients) may register here to connect to these APIs.
-                    
-                    Contact us at {{settings.CONTACT_PHONE }} or {{settings.CONTACT_EMAIL}}
-                    to setup an online account and gain access to the developers' sandbox.
-                    If you already have an account, then
-                    <a href="{% url "social:begin" "verifymyidentity-openidconnect" %}">login</a>.</p>
-                                     
+                    <p><a href="{% url "social:begin" "verifymyidentity-openidconnect" %}">Login</a>
+                    here to register your own OAuth2 client applications.
+                   </p>
+            
+              <br>
                     <h4>About</h4>
                     <p> This is an instance of <a href="{{settings.DEVELOPER_DOCS_URI}}">{{settings.PROJECT_NAME}}</a>
                     an open source <a href="https://oauth.net/2/">OAuth2</a> server implementation.
@@ -47,49 +79,6 @@
                     <a href="https://github.com/TransparentHealth/sharemyhealth/blob/master/README.md">README</a>
                     for information about customization and configuration.</p>
                    
-                   
-                <h4>Application Programming Interfaces (APIs)</h4>
-
-                <p>These APIs are configured for this instance.</p>
-                    <table class="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">URL</th>
-                        <th scope="col">Auth</th>
-                        <th scope="col">Docs</th>
-                        <th scope="col">Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        
-        
-                      <tr>
-                        <th scope="row">OAuth2 Discovery</th>
-                        <td><a href="{% url "oauth_authorization_server" %}"> {% url "oauth_authorization_server" %}</a></td>
-                        <td>Public</td>
-                        <td><a href="https://tools.ietf.org/html/rfc8414">docs</a></td>
-                        <td>See OAuth2 Discovery documentation</td>
-                        
-                      </tr>
-                         <tr>
-                        <th scope="row">FHIR Patient Everything</th>
-                        <td>{% url "get_patient_fhir_content" %}</td>
-                        <td>OAuth2 (Self/Patient-only)</td>
-                        <td><a href="https://www.hl7.org/fhir/operation-patient-everything.html">docs</a></td>
-                        <td>The response is a FHIR Bundle resource.</td>
-                      </tr>
-                      
-                      <tr>
-                        <th scope="row">User Profile</th>
-                        <td>{% url "user_profile" %}</td>
-                        <td>OAuth2 (Self)</td>
-                        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#UserInfo">docs</a></td>
-                         <td>Response is in OpenID Connect format. Security tip: Get this information from the upstream id_token instead.</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                
                                     
                 </div>
                 
