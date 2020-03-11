@@ -269,7 +269,7 @@ LOGIN_URL = '/social-auth/login/verifymyidentity-openidconnect'
 EXTERNAL_AUTH_NAME = "Verify My Identity /OpenID Connect"
 
 PROJECT_NAME = env('DJANGO_PROJECT_NAME',
-                   'Share My Health')
+                   'OAuth2.io')
 
 
 TOP_LEFT_TITLE = env('DJANGO_TOP_LEFT_TITLE',
