@@ -64,10 +64,9 @@ def build_endpoint_info(data=OrderedDict(), issuer=""):
         reverse('oauth2_provider:token')
     data["userinfo_endpoint"] = issuer + \
         reverse('user_profile')
+    data["revocation_endpoint"] = issuer + reverse("oauth2_provider:revoke-token")
+    data["introspection_endpoint"] = issuer + reverse("oauth2_provider:introspect")
     data["ui_locales_supported"] = ["en-US", ]
-    data["service_documentation"] = getattr(settings,
-                                            'DEVELOPER_DOCS_URI',
-                                            "https://cmsgov.github.io/bluebutton-developer-help/")
     data["op_tos_uri"] = settings.TOS_URI
     data["grant_types_supported"] = []
     for i in settings.GRANT_TYPES:
