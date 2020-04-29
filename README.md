@@ -1,11 +1,11 @@
-# Oauth2.io - An OAuth2 Provider and FHIR Proxy
+# Oauth2.org - An OAuth2 Provider and FHIR Proxy
 
 This project is a reusable OAuth2 Server and FHIR Server in Django.
 
 **NOTE**:The repository/code base will change names to 
-OAuth2-io in the near future.
-The name change is necessary to avoid confusion between the 
-ShareMyHealthApp and this code base.
+OAuth2-org in the near future.
+The name change is necessary to avoid confusion between this code base 
+and the ShareMyHealthApp and this code base.
 
 Here is some of what you can do:
 
@@ -30,7 +30,7 @@ patient-facing APIs or FHIR.
 Installation
 ------------
 
-This project is based on Python 3.6 and Django 2.1.x. 
+This project is based on Python 3.6 and Django 2.2.10. 
 
 Download the project:
 
