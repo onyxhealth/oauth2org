@@ -109,6 +109,9 @@ sitestatic/.DS_Store*
 *.komodoproject
 .DS_Store
 
+# IntelliJ/PyCharm
+.idea
+
 # Certs
 client-cert.pem
 client-private-key.pem
