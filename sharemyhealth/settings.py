@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'apps.api',  # Dummy CDA App
     'apps.fhirproxy',
     'apps.hie',
+    # 'apps.adt',
 
     # 3rd Party ---------------------------------------------------
     'widget_tweaks',
@@ -613,4 +614,3 @@ LOGGING = {
         }
     },
 }
-
