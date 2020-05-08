@@ -7,7 +7,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from .models import HIEProfile
 from ..accounts.models import UserProfile
-
+import json
 
 logger = logging.getLogger('smh_debug')
 
@@ -60,6 +60,8 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
         # if the member hasn't been enrolled (no HIEProfile.mrn), try to enroll
         if not hie_profile.mrn:
             logger.debug("No MRN")
+            logger.info("No MRN for %s %s %s, so a search will occur." %
+                        (user.username, user.first_name, user.last_name))
             # try to find the member
             search_data = patient_search(access_token, user_profile)
             if 'response_body' in search_data:
@@ -67,6 +69,8 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
 
             if search_data.get('mrn'):
                 # member found, already has portal account
+                logger.info("MRN for %s %s %s found." %
+                            (user.username, user.first_name, user.last_name))
                 hie_profile.mrn = search_data['mrn']
                 hie_profile.save()
 
@@ -90,7 +94,7 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
                 activated_member_data = activate_staged_user(
                     access_token, hie_profile, user_profile
                 )
-                print('activated_member_data:', activated_member_data)
+
                 if 'response_body' in activated_member_data:
                     result['responses'].append(
                         activated_member_data['response_body'])
@@ -102,12 +106,11 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
                     hie_profile.mrn = activated_member_data['mrn']
                     hie_profile.save()
 
-                print(
-                    {k: v for k, v in hie_profile.__dict__.items() if k[0] != '_'})
+                # print(
+                #     {k: v for k, v in hie_profile.__dict__.items() if k[0] != '_'})
 
         # if the consumer directive checks out, get the clinical data and store
         # it
-        logger.debug("MRN Set")
         directive = consumer_directive(access_token, hie_profile, user_profile)
         if 'response_body' in directive:
             result['responses'].append(directive['response_body'])
@@ -421,6 +424,7 @@ def consumer_directive(access_token, hie_profile, user_profile):
 def get_clinical_document(access_token, hie_profile):
     """Get member's clinical data from HIXNY (CDA XML), convert to FHIR (JSON), and return both.
     """
+    # Build the body of the POST request
     request_xml = """
         <GETDOCUMENTPAYLOAD>
             <MRN>%s</MRN>
@@ -430,8 +434,8 @@ def get_clinical_document(access_token, hie_profile):
         hie_profile.mrn,
         hie_profile.data_requestor,
     )
-    # print(request_xml)
 
+    # Perform the POST request
     response = requests.post(
         settings.HIE_GETDOCUMENT_API_URI,
         cert=(
@@ -464,18 +468,39 @@ def get_clinical_document(access_token, hie_profile):
         cda_content = etree.tounicode(cda_element)
         fhir_content = cda2fhir(cda_content).decode('utf-8')
         result.update(cda_content=cda_content, fhir_content=fhir_content)
-    else:
-        result.update(cda_content='', fhir_content='')
 
+        try:
+            sc = json.loads(fhir_content)
+            if sc["resourceType"] == "Bundle":
+                number_of_entries = len(sc["entry"])
+                logger.info("FHIR Bundle for %s %s %s has %s entries" % (hie_profile.user.username,
+                                                                         hie_profile.user.first_name,
+                                                                         hie_profile.user.last_name,
+                                                                         number_of_entries))
+        except json.JSONDecodeError:
+            logger.info("FHIR Bundle is either blank or contains invalid JSON for %s %s %s." % (hie_profile.user.username,
+                                                                                                hie_profile.user.first_name,
+                                                                                                hie_profile.user.last_name))
+            if not response.content:
+                logger.info("No CDA content for %s %s %s." % (hie_profile.user.username,
+                                                              hie_profile.user.first_name,
+                                                              hie_profile.user.last_name))
+    else:
+        logger.info("CDA document was not found for %s %s %s." % (hie_profile.user.username,
+                                                                  hie_profile.user.first_name,
+                                                                  hie_profile.user.last_name))
+        result.update(cda_content='', fhir_content='')
     return result
 
 
 def cda2fhir(cda_content):
     """use the CDA2FHIR service to convert CDA XML to FHIR JSON"""
+    logger.info("Executing the CDA2FHIR web service.")
     response = requests.post(
         settings.CDA2FHIR_SERVICE_URL,
         data=cda_content,
         headers={'Content-Type': 'application/xml'},
     )
+    logger.info("Completed CDA2FHIR web service call.")
     fhir_content = response.content
     return fhir_content
