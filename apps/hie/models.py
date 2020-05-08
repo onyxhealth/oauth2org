@@ -18,18 +18,25 @@ class HIEProfile(models.Model):
     stageuser_password = models.CharField(
         max_length=64, default='', blank=True)
     stageuser_token = models.CharField(max_length=64, default='', blank=True)
-    data_requestor = models.CharField(
-        max_length=64, default='ActualCBOUser', blank=True)
+    data_requestor = models.CharField(max_length=64, default='ActualCBOUser', blank=True)
     terms_accepted = models.TextField(default='', blank=True)
     terms_string = models.TextField(default='', blank=True)
     user_accept = models.BooleanField(default=False, blank=True)
     terms_of_service = models.CharField(max_length=64, default='', blank=True)
     cda_content = models.TextField(default='', blank=True)
-    cda_content_md5hash = models.CharField(
-        max_length=64, default='', blank=True)
+    cda_content_md5hash = models.CharField(max_length=64, default='', blank=True)
+    consumer_directive_response = models.TextField(default='', blank=True)
+    consumer_directive_response_code = models.TextField(default='', blank=True)
+    activate_staged_user_response = models.TextField(default='', blank=True)
+    activate_staged_user_response_code = models.TextField(default='', blank=True)
+    patient_search_response = models.TextField(default='', blank=True)
+    patient_search_response_code = models.TextField(default='', blank=True)
+    get_cda_response = models.TextField(default='', blank=True)
+    get_cda_response_code = models.TextField(default='', blank=True)
+    cda2fhir_response = models.TextField(default='', blank=True)
+    cda2fhir_response_code = models.TextField(default='', blank=True)
     fhir_content = models.TextField(default='', blank=True)
-    fhir_content_embellish = models.TextField(default='', blank=True,
-                                              help_text='The raw CDA2FHIR translation with enhanced data.')
+    fhir_content_embellish = models.TextField(default='', blank=True, help_text='Reserved for future use.')
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 

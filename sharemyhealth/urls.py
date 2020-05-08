@@ -40,3 +40,8 @@ if IsAppInstalled("djmongo"):
     urlpatterns += [
         url(r'^djm/', include('djmongo.urls')),
     ]
+
+if IsAppInstalled("apps.adt"):
+    urlpatterns += [
+        url(r'^adt/', include('apps.adt.urls')),
+    ]
