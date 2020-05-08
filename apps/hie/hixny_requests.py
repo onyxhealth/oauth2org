@@ -268,7 +268,6 @@ def patient_search(access_token, user_profile):
             if e.tag == "{%(hl7)s}StageUserToken" % NAMESPACES:
                 result['stageuser_token'] = e.text
 
-
     logger.info("Patient search for user %s %s %s." % (user_profile.user.username,
                                                        user_profile.user.first_name,
                                                        user_profile.user.last_name))
