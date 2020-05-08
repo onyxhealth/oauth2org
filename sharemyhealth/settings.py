@@ -67,7 +67,7 @@ INSTALLED_APPS = [
     'apps.api',  # Dummy CDA App
     'apps.fhirproxy',
     'apps.hie',
-    #'apps.adt',
+    # 'apps.adt',
 
     # 3rd Party ---------------------------------------------------
     'widget_tweaks',
@@ -585,31 +585,31 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        #'logging.handlers.SysLogHandler': {
-        #    'level': 'DEBUG',
-        #    'class': 'logging.handlers.SysLogHandler',
-        #    'facility': 'local7',
-        #    'formatter': 'verbose',
-        #    'address': '/dev/log',
-        #}
+        'logging.handlers.SysLogHandler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.SysLogHandler',
+            'facility': 'local7',
+            'formatter': 'verbose',
+            'address': '/dev/log',
+        }
     },
     'loggers': {
         # root logger
         'smh': {
-            'handlers': ['console', ],
+            'handlers': ['console', 'logging.handlers.SysLogHandler'],
             'propagate': True,
             'level': 'INFO',
             'formatter': 'verbose',
             'disabled': False,
         },
         'smh_debug': {
-            'handlers': ['console', ],
+            'handlers': ['console', 'logging.handlers.SysLogHandler'],
             'level': 'DEBUG',
             'formatter': 'verbose',
             'propagate': True,
         },
         '': {
-            'handlers': ['console', ],
+            'handlers': ['console', 'logging.handlers.SysLogHandler'],
             'level': 'DEBUG'
         }
     },
