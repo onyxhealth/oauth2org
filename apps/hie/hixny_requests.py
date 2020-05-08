@@ -88,6 +88,8 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
                     'stageuser_token')
                 hie_profile.save()
 
+                logger.info("result = %r" % (result))
+
                 # try to stage/activate the member
                 activated_member_data = activate_staged_user(
                     access_token, hie_profile, user_profile
@@ -184,7 +186,7 @@ def patient_search(access_token, user_profile):
         auditEmail = settings.HIE_WORKBENCH_USERNAME
     else:
         auditEmail = user_profile.verifying_agent_email
-
+    hie = HIEProfile.objects.get(user=user_profile.user)
     patient_search_xml = """
        <PatientSearchPayLoad>
             <PatGender>%s</PatGender>
@@ -234,6 +236,10 @@ def patient_search(access_token, user_profile):
         data=patient_search_xml,
     )
 
+    # Note that PHR register and
+    hie.patient_search_response = response.content
+    hie.patient_search_response_code = response.status_code
+    hie.save()
     response_xml = etree.XML(response.content)
     result = {"response_body": etree.tounicode(
         response_xml, pretty_print=True)}
@@ -264,10 +270,10 @@ def patient_search(access_token, user_profile):
                 result['stageuser_password'] = e.text
             if e.tag == "{%(hl7)s}StageUserToken" % NAMESPACES:
                 result['stageuser_token'] = e.text
-    if result['error']:
-        logger.info("An error occurred in the patient search for user %s %s %s." % (user_profile.user.username,
-                                                                                    user_profile.user.first_name,
-                                                                                    user_profile.user.last_name))
+
+    logger.info("Patient search for user %s %s %s." % (user_profile.user.username,
+                                                       user_profile.user.first_name,
+                                                       user_profile.user.last_name))
     return result
 
 
@@ -310,6 +316,10 @@ def activate_staged_user(access_token, hie_profile, user_profile):
     )
 
     response_content = response.content.decode('utf-8')
+    hie_profile.activate_staged_user_response = response_content
+    hie_profile.activate_staged_user_response_code = response_content.status_code
+    hie_profile.save()
+
     response_xml = etree.XML(response.content)
 
     result = {"response_body": etree.tounicode(
@@ -363,6 +373,7 @@ def consumer_directive(access_token, hie_profile, user_profile):
             </CONSUMERDIRECTIVEPAYLOAD>
             """ % (
             hie_profile.mrn,
+            # Note Intersystems birthday format.
             user_profile.birthdate_intersystems,
             hie_profile.data_requestor,
             hie_profile.consent_to_share_data,
@@ -387,10 +398,14 @@ def consumer_directive(access_token, hie_profile, user_profile):
             },
             data=consumer_directive_xml,
         )
+        hie_profile.consumer_directive_response = response.content
+        hie_profile.consumer_directive_response_code = response.status_code
+        hie_profile.save()
         response_xml = etree.XML(response.content)
         result = {"response_body": etree.tounicode(
             response_xml, pretty_print=True)}
         # print(result['response_body'])
+        # Consumer Directive
 
         result.update(
             status=''.join(
@@ -407,7 +422,7 @@ def consumer_directive(access_token, hie_profile, user_profile):
 
 
 def get_clinical_document(access_token, hie_profile):
-    """get member's clinical data from HIXNY (CDA XML), convert to FHIR (JSON), return both.
+    """Get member's clinical data from HIXNY (CDA XML), convert to FHIR (JSON), and return both.
     """
     # Build the body of the POST request
     request_xml = """
@@ -440,6 +455,10 @@ def get_clinical_document(access_token, hie_profile):
         data=request_xml,
     )
     response_xml = etree.XML(response.content)
+
+    hie_profile.get_cda_response = response.content
+    hie_profile.get_cda_response_code = response.status_code
+    hie_profile.save()
 
     result = {"response_body": etree.tounicode(
         response_xml, pretty_print=True)}
