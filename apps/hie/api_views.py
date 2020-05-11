@@ -83,8 +83,6 @@ def get_backend_api_responses_test(request):
 @require_GET
 @protected_resource()
 def get_backend_api_responses(request):
-    print("fdfdfd")
-    user = request.user
     owner = request.resource_owner
     hp, g_o_c = HIEProfile.objects.get_or_create(user=owner)
     return JsonResponse(hp.backend_api_responses)
