@@ -73,8 +73,24 @@ def get_patient_fhir_content_test(request):
 
 @require_GET
 @login_required
-def get_fhir_resource_bundle_test(request, fhir_resource_name="all"):
+def get_backend_api_responses_test(request):
+    user = request.user
+    up, g_o_c = UserProfile.objects.get_or_create(user=user)
+    hp, g_o_c = HIEProfile.objects.get_or_create(user=user)
+    return JsonResponse(hp.backend_api_responses)
 
+
+@require_GET
+@protected_resource()
+def get_backend_api_responses(request):
+    owner = request.resource_owner
+    hp, g_o_c = HIEProfile.objects.get_or_create(user=owner)
+    return JsonResponse(hp.backend_api_responses)
+
+
+@require_GET
+@login_required
+def get_fhir_resource_bundle_test(request, fhir_resource_name="all"):
     user = request.user
     hp = HIEProfile.objects.get(user=user)
     cd = get_converted_fhir_resource(json.loads(
