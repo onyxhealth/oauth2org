@@ -11,11 +11,21 @@ from .api_views import (get_cda_in_json, get_cda_raw,
                         get_fhir_vital_signs_bundle,
                         get_fhir_lab_results_bundle_test,
                         get_fhir_lab_results_bundle,
+                        get_backend_api_responses_test,
+                        get_backend_api_responses,
                         )
 
 admin.autodiscover()
 
 urlpatterns = [
+
+    url(r'api/back-end-api-responses$', get_backend_api_responses,
+        name='get_backend_api_responses'),
+    
+    url(r'api/back-end-api-responses-test$', get_backend_api_responses_test,
+        name='get_backend_api_responses_test'),
+
+
 
 
     url(r'api/fhir/stu3/VitalSigns/$', get_fhir_vital_signs_bundle,

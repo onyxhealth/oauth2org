@@ -66,6 +66,11 @@ After they expire you will need to go through Authorization process again.
 					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_lab_results_bundle' %}"</pre>
 					</li>
 
+
+     <li>Backlend API Responses 
+					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_backend_api_responses' %}"</pre>
+					</li>
+
      <li>User Profile
 					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'user_profile' %}"</pre>
 					</li>
