@@ -42,9 +42,9 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
     result = {'responses': []}
 
     if hie_profile is None:
-        hie_profile, created = HIEProfile.objects.get(user=user)
+        hie_profile, created = HIEProfile.objects.get_or_create(user=user)
     if user_profile is None:
-        user_profile, created = UserProfile.objects.get(user=user)
+        user_profile, created = UserProfile.objects.get_or_create(user=user)
 
     if hie_profile.flag_dont_connect:
         result['cda_content'] = hie_profile.cda_content
@@ -317,7 +317,7 @@ def activate_staged_user(access_token, hie_profile, user_profile):
 
     response_content = response.content.decode('utf-8')
     hie_profile.activate_staged_user_response = response_content
-    hie_profile.activate_staged_user_response_code = response_content.status_code
+    hie_profile.activate_staged_user_response_code = response.status_code
     hie_profile.save()
 
     response_xml = etree.XML(response.content)
@@ -467,6 +467,8 @@ def get_clinical_document(access_token, hie_profile):
     if cda_element is not None:
         cda_content = etree.tounicode(cda_element)
         fhir_content = cda2fhir(cda_content).decode('utf-8')
+        hie_profile.cda2fhir_response = fhir_content
+        hie_profile.save()
         result.update(cda_content=cda_content, fhir_content=fhir_content)
 
         try:
