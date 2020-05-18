@@ -56,7 +56,7 @@ class HIEProfile(models.Model):
         # Note all of these steps require an access_token.
         # We are not saving this  first response step.
 
-        od['patient_search_response_response'] = self.patient_search_response
+        od['patient_search_response'] = self.patient_search_response
         od['patient_search_response_code'] = self.patient_search_response_code
 
         od['consumer_directive_response'] = self.consumer_directive_response
