@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
-
+from .utils import get_id_token_payload
 
 # Copyright Videntity Systems Inc.
 
@@ -10,11 +10,6 @@ __author__ = "Alan Viars"
 
 SEX_CHOICES = (('male', 'Male'), ('female', 'Female'), ('', 'Unspecified'))
 
-GENDER_CHOICES = (('M', 'Male'),
-                  ('F', 'Female'),
-                  ('TMF', 'Transgender Male to Female'),
-                  ('TFM', 'Transgender Female to Male'),
-                  ('', 'Unspecified'))
 
 
 class UserProfile(models.Model):
@@ -46,8 +41,7 @@ class UserProfile(models.Model):
                               max_length=32, default="",
                               help_text=_('Birth Sex Gender'),
                               )
-    gender_identity = models.CharField(choices=GENDER_CHOICES,
-                                       max_length=32, default="",
+    gender_identity = models.CharField(max_length=64, default="",
                                        help_text=_('Gender Identity'),
                                        )
 
@@ -71,6 +65,30 @@ class UserProfile(models.Model):
                                   self.user.last_name,
                                   self.user.username)
         return display
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfile, self).__init__(*args, **kwargs)
+        self._id_token_payload = get_id_token_payload(self.user)
+
+    @property
+    def id_token_payload(self):
+        """Return the token Payload as a"""
+        return self._id_token_payload
+
+    @property
+    def ssn(self):
+        num = ""
+        for doc in self.doc:
+            if doc['type'] == "SSN":
+                num = doc['num']
+        return num
+
+    @property
+    def doc(self):
+        doc = self.id_token_payload.get('document')
+        if not doc:
+            doc = []
+        return doc
 
     @property
     def given_name(self):
@@ -146,7 +164,3 @@ class UserProfile(models.Model):
     @property
     def address(self):
         return ""
-
-    @property
-    def doc(self):
-        return "[]"
