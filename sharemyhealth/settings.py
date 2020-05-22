@@ -231,6 +231,7 @@ SOCIAL_AUTH_PIPELINE = [
     'apps.accounts.pipeline.oidc.save_profile',
     'apps.fhirproxy.pipeline.identifiers_to_crosswalk.set_crosswalk_with_id_token',
     'apps.verifymyidentity.pipeline.save_profile.save_profile',
+    'apps.verifymyidentity.pipeline.save_mrn.save_mrn',
 ]
 
 if DEBUG:
@@ -331,7 +332,7 @@ CALL_ORGANIZATION = "organization"
 CALL_ORGANIZATION_PLURAL = "organizations"
 
 DATA_SOURCE_TITLE = env('DATA_SOURCE_TITLE', 'Health Information Exchange of New York (HIXNY)')
-
+DATA_SOURCE_TITLE_SHORT = env('DATA_SOURCE_TITLE', 'HIXNY')
 # Default config for consumer/member/patient facing APIs.  Adjust for other use cases
 PROTECTED_RESOURCE_TITLE = env(
     'PROTECTED_RESOURCE_TITLE',
@@ -370,6 +371,7 @@ SETTINGS_EXPORT = [
     'CALL_ORGANIZATION_PLURAL',
     'DATA_SOURCE_TITLE',
     'PROTECTED_RESOURCE_TITLE',
+    'DATA_SOURCE_TITLE_SHORT',
     'TOP_LEFT_TITLE',
     'KILLER_APP_URI',
     'RESOURCES',
