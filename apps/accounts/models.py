@@ -11,7 +11,6 @@ __author__ = "Alan Viars"
 SEX_CHOICES = (('male', 'Male'), ('female', 'Female'), ('', 'Unspecified'))
 
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE,
                                 db_index=True, null=False)
