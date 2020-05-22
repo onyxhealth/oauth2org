@@ -25,9 +25,6 @@ urlpatterns = [
     url(r'api/back-end-api-responses-test$', get_backend_api_responses_test,
         name='get_backend_api_responses_test'),
 
-
-
-
     url(r'api/fhir/stu3/VitalSigns/$', get_fhir_vital_signs_bundle,
         name='get_fhir_vital_signs_bundle'),
 
