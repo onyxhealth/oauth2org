@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from jwkest.jwt import JWT
 from ..hie.models import HIEProfile
 from ..hie.hixny_requests import (acquire_access_token, consumer_directive, get_clinical_document,
-                                 patient_search, activate_staged_user, fetch_patient_data)
+                                  fetch_patient_data)
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
@@ -42,7 +42,6 @@ def fetch_cda(request):
 def do_fetch_patient_data(request):
     result = fetch_patient_data(request.user)
     return HttpResponse(str(result))
-
 
 
 @login_required

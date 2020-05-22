@@ -61,7 +61,6 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
 
         # if the member hasn't been enrolled (no HIEProfile.mrn), try to enroll
         if not hie_profile.mrn:
-            logger.debug("No MRN")
             logger.info("No MRN for %s %s %s, so a search will occur." %
                         (user.username, user.first_name, user.last_name))
             # try to find the member
