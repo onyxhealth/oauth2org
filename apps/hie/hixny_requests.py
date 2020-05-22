@@ -11,6 +11,8 @@ import json
 
 logger = logging.getLogger('smh_debug')
 
+# Copyright Videntity Systems Inc.
+
 __author__ = "Alan Viars"
 
 
@@ -59,7 +61,6 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
 
         # if the member hasn't been enrolled (no HIEProfile.mrn), try to enroll
         if not hie_profile.mrn:
-            logger.debug("No MRN")
             logger.info("No MRN for %s %s %s, so a search will occur." %
                         (user.username, user.first_name, user.last_name))
             # try to find the member
@@ -69,7 +70,7 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
 
             if search_data.get('mrn'):
                 # member found, already has portal account
-                logger.info("MRN for %s %s %s found." %
+                logger.info("MRN for %s %s %s is found." %
                             (user.username, user.first_name, user.last_name))
                 hie_profile.mrn = search_data['mrn']
                 hie_profile.save()
@@ -90,7 +91,7 @@ def fetch_patient_data(user, hie_profile=None, user_profile=None):
 
                 logger.info("result = %r" % (result))
 
-                # try to stage/activate the member
+                # try to stage/activate the member - this step returns the MRN.
                 activated_member_data = activate_staged_user(
                     access_token, hie_profile, user_profile
                 )
@@ -180,7 +181,7 @@ def acquire_access_token():
 
 def patient_search(access_token, user_profile):
     """search for a patient with the given profile; if found, return """
-    # If paitent was created before verifying email added, append default
+    # If patient was created before verifying email added, append default
     auditEmail = ""
     if user_profile.verifying_agent_email == "":
         auditEmail = settings.HIE_WORKBENCH_USERNAME
@@ -201,7 +202,7 @@ def patient_search(access_token, user_profile):
             <PatAddrCity></PatAddrCity>
             <PatAddrZip></PatAddrZip>
             <PatAddrState></PatAddrState>
-            <PatSSN></PatSSN>
+            <PatSSN>%s</PatSSN>
             <PatHomePhone></PatHomePhone>
             <PatEmail></PatEmail>
             <WorkBenchUserName>%s</WorkBenchUserName>
@@ -213,6 +214,7 @@ def patient_search(access_token, user_profile):
         user_profile.user.last_name,
         user_profile.user.first_name,
         user_profile.middle_name,
+        user_profile.ssn,
         auditEmail,
     )
     logger.debug("patient search payload = %r" % (patient_search_xml))
@@ -241,8 +243,7 @@ def patient_search(access_token, user_profile):
     hie.patient_search_response_code = response.status_code
     hie.save()
     response_xml = etree.XML(response.content)
-    result = {"response_body": etree.tounicode(
-        response_xml, pretty_print=True)}
+    result = {"response_body": etree.tounicode(response_xml, pretty_print=True)}
     logger.debug("response body = %r" % (result['response_body']))
 
     for element in response_xml:
@@ -278,9 +279,17 @@ def patient_search(access_token, user_profile):
 
 
 def activate_staged_user(access_token, hie_profile, user_profile):
-    """try to activate the member with HIXNY;
+    """try to activate the member within InterSystems HealthShare;
     if successful, returns MRN
     """
+    # If we already have an MRN, do not do this again.
+
+    if hie_profile.mrn:
+        result = {'status': 'success', 'mrn': hie_profile.mrn}
+        logger.info("Skipping activation for %s %s." %
+                    (user_profile, hie_profile.mrn))
+        return result
+
     activate_xml = """
         <ACTIVATESTAGEDUSERPAYLOAD>
             <DOB>%s</DOB>
@@ -345,7 +354,9 @@ def activate_staged_user(access_token, hie_profile, user_profile):
         result.update(
             status='failure', mrn=None, error='Could not activate staged user.'
         )
-
+        logger.info("Could not activate staged %s %s %s." % (user_profile.user.username,
+                                                             user_profile.user.first_name,
+                                                             user_profile.user.last_name))
     return result
 
 
@@ -353,16 +364,12 @@ def consumer_directive(access_token, hie_profile, user_profile):
     """post to the consumer directive API to determine the member's consumer directive;
     returns data containing the status and any notice.
     """
-    if not hie_profile.consent_to_share_data:
+    if not hie_profile.mrn:
         result = {
             'status': 'ERROR',
-            'notice': 'Member has not consented to share data, cannot submit consumer directive.',
-        }
-    elif not hie_profile.mrn:
-        result = {
-            'status': 'ERROR',
-            'notice': 'Member MRN not set, cannot submit consumer directive.',
-        }
+            'notice': 'Member MRN not set, cannot submit consumer directive.'}
+        logger.debug(
+            "Consumer directive step cannot continue for %s. No MRN." % (user_profile))
     else:
         consumer_directive_xml = """
             <CONSUMERDIRECTIVEPAYLOAD>
@@ -378,7 +385,7 @@ def consumer_directive(access_token, hie_profile, user_profile):
             hie_profile.data_requestor,
             hie_profile.consent_to_share_data,
         )
-        # print(consumer_directive_xml)
+        logger.debug("user %s consumer_directive_post %s" % (user_profile, consumer_directive_xml))
 
         response = requests.post(
             settings.HIE_CONSUMERDIRECTIVE_API_URI,
@@ -406,7 +413,6 @@ def consumer_directive(access_token, hie_profile, user_profile):
             response_xml, pretty_print=True)}
         # print(result['response_body'])
         # Consumer Directive
-
         result.update(
             status=''.join(
                 response_xml.xpath("hl7:Status/text()", namespaces=NAMESPACES)
