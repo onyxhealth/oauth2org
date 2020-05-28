@@ -4,14 +4,17 @@ from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from jwkest.jwt import JWT
 from ..hie.models import HIEProfile
-from ..hie.hixny_requests import acquire_access_token, consumer_directive, get_clinical_document
+from ..hie.hixny_requests import (acquire_access_token, consumer_directive, get_clinical_document,
+                                  fetch_patient_data)
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.http import HttpResponseRedirect, FileResponse
 from django.urls import reverse
 
-_author_ = "Alan Viars"
+# Copyright Videntity Systems Inc.
+
+__author__ = "Alan Viars"
 
 logger = logging.getLogger('smh_debug')
 
@@ -22,10 +25,9 @@ def fetch_cda(request):
     # print(hp)
 
     if not hp.mrn:
-        msg = _(
-            "Your identity is not yet bound to a resource. Try connecting with OAuth2 using the Test client.")
+        msg = _("Your identity is not yet bound to a resource.")
         messages.warning(request, msg)
-        return HttpResponseRedirect(reverse('authenticated_home'))
+        return HttpResponseRedirect(reverse('home'))
     access_token = acquire_access_token()
     # print(access_token)
     result = consumer_directive(
@@ -34,6 +36,12 @@ def fetch_cda(request):
     # print(result)
     return FileResponse(result['response_body'],
                         content_type='application/xml')
+
+
+@login_required
+def do_fetch_patient_data(request):
+    result = fetch_patient_data(request.user)
+    return HttpResponse(str(result))
 
 
 @login_required
