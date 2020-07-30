@@ -1,4 +1,4 @@
-"""Share My Heaalth OAuth2 Provider  URL Configuration"""
+"""oauth2org OAuth2 Provider  URL Configuration"""
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include, url
@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^api/', include('apps.api.urls')),
     url(r'^fhir/', include('apps.fhirproxy.urls')),
     url(r'^hie/', include('apps.hie.urls')),
+    url(r'^provider-directory/', include('apps.provider_directory.urls')),
     url(r'^rhio/', include('apps.hie.urls')),
     url(r'^hixny/', include('apps.hie.urls')),
     url(r'^testclient/', include('apps.testclient.urls')),

@@ -3,7 +3,7 @@ services:
   db:
     image: postgres
     environment:
-            - POSTGRES_DB=smh
+            - POSTGRES_DB=oauth2org-pg
             - POSTGRES_PASSWORD=toor
     ports:
             - "5432:5432"
@@ -15,7 +15,7 @@ services:
       - "8000:80"
     environment:
             - OAUTHLIB_INSECURE_TRANSPORT=true
-            - DATABASES_CUSTOM=postgres://postgres:toor@db:5432/smh
+            - DATABASES_CUSTOM=postgres://postgres:toor@db:5432/oauth2org-pg
             - ALLOWED_HOSTS=localhost
     depends_on:
       - db

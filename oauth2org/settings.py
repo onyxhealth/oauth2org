@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'apps.api',  # Dummy CDA App
     'apps.fhirproxy',
     'apps.hie',
+    'apps.provider_directory',
     # 'apps.adt',
 
     # 3rd Party ---------------------------------------------------
@@ -98,7 +99,7 @@ MIDDLEWARE = [
 ]
 
 
-ROOT_URLCONF = 'sharemyhealth.urls'
+ROOT_URLCONF = 'oauth2org.urls'
 
 TEMPLATES = [
     {
@@ -119,7 +120,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'sharemyhealth.wsgi.application'
+WSGI_APPLICATION = 'oauth2org.wsgi.application'
 
 
 # Database
@@ -199,7 +200,7 @@ AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', 'change-me')
 
 # OAUTH SETTINGS
 OAUTH2_PROVIDER = {
-    'OAUTH2_VALIDATOR_CLASS': 'sharemyhealth.oauth2_validators.SingleAccessTokenValidator',
+    'OAUTH2_VALIDATOR_CLASS': 'oauth2org.oauth2_validators.SingleAccessTokenValidator',
     'SCOPES': {"read": "Read scope",
                "patient/*.read": "Permission to read any resource for the current patient",
                "profile": "read the user's profile"},
@@ -239,10 +240,10 @@ if DEBUG:
 
 SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_KEY = env(
     'SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_KEY',
-    'sharemyhealth@verifymyidentity')
+    'oauth2org@verifymyidentity')
 SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_SECRET = env(
     'SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_SECRET',
-    'sharemyhealth@verifymyidentity-change-this-secret')
+    'oauth2org@verifymyidentity-change-this-secret')
 SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_SCOPE = ['openid', ]
 SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_OIDC_ENDPOINT = env(
@@ -263,39 +264,39 @@ LOGIN_URL = '/social-auth/login/verifymyidentity-openidconnect'
 
 EXTERNAL_AUTH_NAME = "Verify My Identity / OpenID Connect"
 
-PROJECT_NAME = env('DJANGO_PROJECT_NAME', 'OAuth2.io')
+PROJECT_NAME = env('DJANGO_PROJECT_NAME', 'OAuth2org instance')
 
 
 TOP_LEFT_TITLE = env('DJANGO_TOP_LEFT_TITLE',
-                     'Share My Health')
+                     'OAuth2.org')
 
 APPLICATION_TITLE = env('DJANGO_APPLICATION_TITLE',
                         'OAuth2.org')
 ORGANIZATION_TITLE = env(
     'DJANGO_ORGANIZATION_TITLE',
-    'Alliance for Better Health')
+    'Videntity')
 
 CONTACT_PHONE = env('CONTACT_PHONE', '1-888-871-1017')
 
 CONTACT_EMAIL = env('CONTACT_EMAIL', 'sales@videntity.com')
 
-KILLER_APP_URI = env('KILLER_APP_URI', 'https://app.sharemy.health')
+KILLER_APP_URI = env('KILLER_APP_URI', 'https://app.microphr.com')
 
-ORGANIZATION_URI = env('DJANGO_ORGANIZATION_URI', 'https://abhealth.us')
+ORGANIZATION_URI = env('DJANGO_ORGANIZATION_URI', 'https://videntity.com')
 POLICY_URI = env('DJANGO_POLICY_URI',
-                 'http://sharemy.health/privacy-policy-1.0.html')
+                 'https://example.com/privacy-policy-1.0.html')
 POLICY_TITLE = env('DJANGO_POLICY_TITLE', 'Privacy Policy')
 TOS_URI = env('DJANGO_TOS_URI',
-              'http://sharemy.health/terms-of-service-1.0.html')
+              'https://example.com/terms-of-service-1.0.html')
 TOS_TITLE = env('DJANGO_TOS_TITLE', 'Terms of Service')
 TAG_LINE_1 = env('DJANGO_TAG_LINE_1', 'Share your health data')
 TAG_LINE_2 = env('DJANGO_TAG_LINE_2',
                  'with applications, organizations, and people you trust.')
-USER_DOCS_URI = env('USER_DOCS_URI', "https:/github.com/TransparentHealth/sharemyhealth")
+USER_DOCS_URI = env('USER_DOCS_URI', "https:/github.com/TransparentHealth/oauth2org")
 USER_DOCS_TITLE = "User Documentation"
 USER_DOCS = "User Docs"
 # LINKS TO DOCS
-DEVELOPER_DOCS_URI = "https:/github.com/TransparentHealth/sharemyhealth"
+DEVELOPER_DOCS_URI = "https:/github.com/TransparentHealth/oauth2org"
 DEVELOPER_DOCS_TITLE = "Open Source"
 DEVELOPER_DOCS = "Open Source"
 DEFAULT_DISCLOSURE_TEXT = """
@@ -306,7 +307,7 @@ DEFAULT_DISCLOSURE_TEXT = """
 
 DISCLOSURE_TEXT = env('DISCLOSURE_TEXT', DEFAULT_DISCLOSURE_TEXT)
 
-HOSTNAME_URL = env('HOSTNAME_URL', 'http://sharemyhealth:8001')
+HOSTNAME_URL = env('HOSTNAME_URL', 'http://oauth2org:8001')
 
 VMI_SIGNUP_URL = "%s/accounts/create-account/%s/?next=%s" % \
                  (SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_OIDC_ENDPOINT,
@@ -331,8 +332,8 @@ CALL_MEMBER_PLURAL = "members"
 CALL_ORGANIZATION = "organization"
 CALL_ORGANIZATION_PLURAL = "organizations"
 
-DATA_SOURCE_TITLE = env('DATA_SOURCE_TITLE', 'Health Information Exchange of New York (HIXNY)')
-DATA_SOURCE_TITLE_SHORT = env('DATA_SOURCE_TITLE', 'HIXNY')
+DATA_SOURCE_TITLE = env('DATA_SOURCE_TITLE', 'Any State Health Information Exchange')
+DATA_SOURCE_TITLE_SHORT = env('DATA_SOURCE_TITLE', 'Any state, USA')
 # Default config for consumer/member/patient facing APIs.  Adjust for other use cases
 PROTECTED_RESOURCE_TITLE = env(
     'PROTECTED_RESOURCE_TITLE',
@@ -380,14 +381,14 @@ SETTINGS_EXPORT = [
 
 
 # These settings are for connection to InterSystems APIs for Health Information Exchanges
-# Data is received as CCDA and converted to FHIR.  You don't need this
-# information
+# Data is received as CCDA and converted to FHIR.  You don't need this information.
+
 
 
 HIE_TOKEN_API_URI = env('HIE_TOKEN_API_URI',
-                        'https://integration.hixny.com:6443/')
+                        'https://integration.example.com:6443/')
 HIE_PATIENT_API_URI = env('HIE_PATIENT_API_URI',
-                          'https://integration.hixny.com:5443')
+                          'https://integration.example.com:5443')
 HIE_PHRREGISTER_API_URI = "%s/PHRREGISTER" % (HIE_PATIENT_API_URI)
 HIE_ACTIVATESTAGEDUSER_API_URI = "%s/ACTIVATESTAGEDUSER" % (
     HIE_PATIENT_API_URI)
@@ -415,6 +416,11 @@ HIE_CLIENT_CERT_FILEPATH = env('HIE_CLIENT_CERT_FILEPATH', 'client-cert.pem')
 HIE_CLIENT_PRIVATE_KEY_FILEPATH = env(
     'HIE_CLIENT_PRIVATE_KEY_FILEPATH', 'client-private-key.pem')
 
+# End of InterSystems HIE settings
+
+
+# CDA2FHIR is use to convert Intersystems CDA. At the time of this writing
+# Intersystems doesn't have a usable FHIR interface.
 
 # Should be operated behind a firewall and in ssl/https in production.
 CDA2FHIR_SERVICE = env('CDA2FHIR_SERVICE',
@@ -566,9 +572,5 @@ LOGGING = {
             'formatter': 'verbose',
             'propagate': True,
         },
-        '': {
-            'handlers': ['console', 'logging.handlers.SysLogHandler'],
-            'level': 'DEBUG'
-        }
     },
 }
