@@ -7,7 +7,6 @@
 from django.conf import settings
 import json
 import sys
-import csv
 from datetime import datetime, date, time
 from bson.code import Code
 from bson.objectid import ObjectId
@@ -85,7 +84,7 @@ def query_mongo(
         return_keys=()):
     """return a response_dict  with a list of search results"""
 
-    l = []
+    mylist = []
     response_dict = {}
 
     try:
@@ -128,11 +127,10 @@ def query_mongo(
             # d['id'] = d['_id'].__str__()
             # d['_id'] = d['_id'].__str__()
             del d['_id']
-            l.append(d)
-        response_dict['results'] = l
+            mylist.append(d)
+        response_dict['results'] = mylist
 
-    except:
-        print("Error reading from Mongo")
+    except Exception:
         print(str(sys.exc_info()))
         response_dict['num_results'] = 0
         response_dict['code'] = 500
@@ -143,22 +141,14 @@ def query_mongo(
     return response_dict
 
 
-def query_mongo_sort_decend(
-        database_name,
-        collection_name,
-        query={},
-        skip=0,
-        limit=getattr(
-            settings,
-            'MONGO_LIMIT',
-            200),
-    return_keys=(),
-        sortkey=None):
+def query_mongo_sort_decend(database_name, collection_name, query={},
+                            skip=0, limit=getattr(settings, 'MONGO_LIMIT', 200),
+                            return_keys=(), sortkey=None):
     """return a response_dict  with a list of search results in decending
     order based on a sort key
     """
 
-    l = []
+    mylist = []
     response_dict = {}
 
     try:
@@ -187,10 +177,10 @@ def query_mongo_sort_decend(
         for d in mysearchresult:
             d['id'] = d['_id'].__str__()
             del d['_id']
-            l.append(d)
-        response_dict['results'] = l
+            mylist.append(d)
+        response_dict['results'] = mylist
 
-    except:
+    except Exception:
         print("Error reading from Mongo")
         print(str(sys.exc_info()))
         response_dict['num_results'] = 0
@@ -205,7 +195,6 @@ def delete_mongo(database_name, collection_name,
                  query={}, just_one=False):
     """delete from mongo helper"""
 
-    l = []
     response_dict = {}
 
     try:
@@ -214,13 +203,11 @@ def delete_mongo(database_name, collection_name,
         mc = MongoClient(mongodb_client_url, document_class=OrderedDict)
         db = mc[str(database_name)]
         collection = db[str(collection_name)]
-
-        mysearchresult = collection.remove(query, just_one)
-
+        collection.remove(query, just_one)
         response_dict['code'] = 200
         response_dict['type'] = "remove-confirmation"
 
-    except:
+    except Exception:
         # print "Error reading from Mongo"
         # print str(sys.exc_info())
         response_dict['num_results'] = 0
@@ -237,7 +224,7 @@ def write_mongo(document, database_name,
     the written record. Method functions as both insert or update based on update
     parameter"""
 
-    l = []
+    mylist = []
     response_dict = {}
     try:
         mongodb_client_url = getattr(settings, 'MONGODB_CLIENT',
@@ -251,7 +238,6 @@ def write_mongo(document, database_name,
         #    query = cast_number_strings_to_integers(query)
 
         potential_key_found = False
-        existing_transaction_id = None
         existing_mongo_id = None
 
         # enforce non-repudiation constraint on create
@@ -269,7 +255,7 @@ def write_mongo(document, database_name,
             if existing_mongo_id:
                 potential_key_found = True
 
-        if update == False and potential_key_found == True:
+        if update is False and potential_key_found is True:
             """409 conflict"""
             response_dict['code'] = 409
             response_dict['type'] = "Error"
@@ -313,7 +299,7 @@ def write_mongo(document, database_name,
                 # print history_object
 
                 # now write the record to the historical collection
-                written_object = history_collection.insert(history_object)
+                history_collection.insert(history_object)
 
             # update the record
             myobjectid = collection.save(document)
@@ -329,96 +315,12 @@ def write_mongo(document, database_name,
         response_dict['type'] = "write-results"
         myobject['id'] = myobject['_id'].__str__()
         del myobject['_id']
-        l.append(myobject)
-        response_dict['results'] = l
+        mylist.append(myobject)
+        response_dict['results'] = mylist
 
-    except:
+    except Exception:
         # print "Error reading from Mongo"
         # print str(sys.exc_info())
-        response_dict['code'] = 400
-        response_dict['type'] = "Error"
-        response_dict['results'] = []
-        response_dict['message'] = str(sys.exc_info())
-    return response_dict
-
-
-def bulk_csv_import_mongo(csvfile, database_name, collection_name,
-                          delete_collection_before_import=False):
-    """return a response_dict  with a list of search results"""
-    """method can be insert or update"""
-
-    l = []
-    response_dict = {}
-    try:
-        mongodb_client_url = getattr(settings, 'MONGODB_CLIENT',
-                                     'mongodb://localhost:27017/')
-        mc = MongoClient(mongodb_client_url, document_class=OrderedDict)
-        db = mconnection[database_name]
-        collection = db[collection_name]
-
-        if delete_collection_before_import:
-            myobjectid = collection.remove({})
-
-        # open the csv file.
-        csvhandle = csv.reader(open(csvfile._get_path(), 'rb'), delimiter=',')
-
-        rowindex = 0
-        errors = 0
-        error_list = []
-        success = 0
-        for row in csvhandle:
-
-            if rowindex == 0:
-                column_headers = row
-                cleaned_headers = []
-                for c in column_headers:
-                    c = c.replace(".", "")
-                    c = c.replace("$", "-")
-                    c = c.replace(" ", "_")
-                    cleaned_headers.append(c)
-            else:
-
-                record = OrderedDict(zip(cleaned_headers, row))
-                # if there is no values, skip the key value pair
-                kwargs = OrderedDict()
-
-                # Only populate fields that are not blank.
-                for k, v in record.items():
-                    if v:
-                        if v.isdigit():
-                            kwargs[k] = int(v)
-                        else:
-                            kwargs[k] = v
-                try:
-
-                    myobjectid = collection.insert(kwargs)
-                    success += 1
-                except:
-                    error_message = "Error on row " + \
-                        rowindex + ". " + str(sys.exc_info())
-                    error_list.append(str(sys.exc_info()))
-
-            rowindex += 1
-
-        if error_list:
-            response_dict = {}
-            response_dict['num_rows_imported'] = rowindex
-            response_dict['num_rows_errors'] = len(error_list)
-            response_dict['errors'] = error_list
-            response_dict['code'] = 400
-            response_dict['message'] = "Completed with errors"
-        else:
-
-            response_dict = {}
-            response_dict['num_rows_imported'] = success
-            response_dict['code'] = 200
-            response_dict['message'] = "Completed."
-        return response_dict
-
-    except:
-        # print "Error reading from Mongo"
-        # print str(sys.exc_info())
-        response_dict['num_results'] = 0
         response_dict['code'] = 400
         response_dict['type'] = "Error"
         response_dict['results'] = []
@@ -440,40 +342,6 @@ def build_non_observational_key(k):
     return k
 
 
-def get_collection_keys(database_name, collection_name):
-    l = []
-    try:
-        mongodb_client_url = getattr(settings, 'MONGODB_CLIENT',
-                                     'mongodb://localhost:27017/')
-        mc = MongoClient(mongodb_client_url, document_class=OrderedDict)
-        db = mconnection[database_name]
-        ckey_collection = "%s_keys" % (collection_name)
-        collection = db[ckey_collection]
-        result = collection.find({}).distinct("_id")
-        for r in result:
-            l.append(r)
-
-        if getattr(settings, 'SORTCOLUMNS', False):
-            nl = []  # new list list
-            # sort the list according to our list
-
-            for i in getattr(settings, 'SORTCOLUMNS', False):
-                for j in l:
-                    if j.__contains__(i):
-                        nl.append(j)
-            difflist = list(set(l) - set(nl))
-
-            for i in difflist:
-                nl.append(i)
-            return nl
-
-        else:
-            return sorted(l)
-    except:
-        print("Error.", str(sys.exc_info()))
-        return []
-
-
 def build_keys_with_mapreduce(database_name, collection_name):
     map = Code("function() { "
                "    for (var key in this)"
@@ -492,14 +360,14 @@ def build_keys_with_mapreduce(database_name, collection_name):
     result_collection_name = "%s_keys" % (collection_name)
 
     result = collection.map_reduce(map, reduce, result_collection_name)
-    return None
+    return result
 
 
 def raw_query_mongo_db(kwargs, database_name, collection_name):
     # for key in kwargs:
     #    print "arg: %s: %s" % (key, kwargs[key])
     """return a result list or an empty list"""
-    l = []
+    mylist = []
     response_dict = {}
 
     try:
@@ -513,11 +381,10 @@ def raw_query_mongo_db(kwargs, database_name, collection_name):
         if mysearchcount > 0:
             response_dict['code'] = 200
             for d in mysearchresult:
-                l.append(d)
-            response_dict['results'] = l
-    except:
-        # print "Error reading from Mongo"
-        # print str(sys.exc_info())
+                mylist.append(d)
+            response_dict['results'] = mylist
+    except Exception:
+
         response_dict['code'] = 400
 
         response_dict['type'] = "Error"
@@ -529,14 +396,7 @@ def cast_number_strings_to_integers(d):
     """d is a dict"""
     for k, v in d.items():
         # print type(v)
-        if determine_if_str_or_unicode(v):
+        if v:
             if v.isdigit():
                 d[k] = int(v)
     return d
-
-
-def determine_if_str_or_unicode(s):
-    # if str or unicode return True, else False.
-    if isinstance(s, str) or isinstance(s, unicode):
-        return True
-    return False
