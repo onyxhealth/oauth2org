@@ -32,7 +32,8 @@ SECRET_KEY = env(
 DEBUG = bool_env(env('DEBUG', True))
 
 if DEBUG:
-    # Never run a production system in DEBUG or with insecure transport turned off (i.e. http instead of https)
+    # Never run a production system in DEBUG or with insecure transport turned
+    # off (i.e. http instead of https)
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 ALLOWED_HOSTS = ['*', ]
@@ -84,7 +85,10 @@ _enable_conditional('djmongo.read')
 _enable_conditional('djmongo.dataimport')
 _enable_conditional('djmongo.write')
 _enable_conditional('djmongo.aggregations')
+MONGODB_CLIENT = env('MONGODB_CLIENT', 'mongodb://localhost:27017/')
 
+# If False, only show all DBs. If true show DB's with matching group.
+DJMONGO_DB_GROUPS = bool_env(env('DJMONGO_DB_GROUPS', True))
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -292,7 +296,8 @@ TOS_TITLE = env('DJANGO_TOS_TITLE', 'Terms of Service')
 TAG_LINE_1 = env('DJANGO_TAG_LINE_1', 'Share your health data')
 TAG_LINE_2 = env('DJANGO_TAG_LINE_2',
                  'with applications, organizations, and people you trust.')
-USER_DOCS_URI = env('USER_DOCS_URI', "https:/github.com/TransparentHealth/oauth2org")
+USER_DOCS_URI = env(
+    'USER_DOCS_URI', "https:/github.com/TransparentHealth/oauth2org")
 USER_DOCS_TITLE = "User Documentation"
 USER_DOCS = "User Docs"
 # LINKS TO DOCS
@@ -332,9 +337,11 @@ CALL_MEMBER_PLURAL = "members"
 CALL_ORGANIZATION = "organization"
 CALL_ORGANIZATION_PLURAL = "organizations"
 
-DATA_SOURCE_TITLE = env('DATA_SOURCE_TITLE', 'Any State Health Information Exchange')
+DATA_SOURCE_TITLE = env('DATA_SOURCE_TITLE',
+                        'Any State Health Information Exchange')
 DATA_SOURCE_TITLE_SHORT = env('DATA_SOURCE_TITLE', 'Any state, USA')
-# Default config for consumer/member/patient facing APIs.  Adjust for other use cases
+# Default config for consumer/member/patient facing APIs.  Adjust for
+# other use cases
 PROTECTED_RESOURCE_TITLE = env(
     'PROTECTED_RESOURCE_TITLE',
     'read-only access to your personal health information')
@@ -381,8 +388,8 @@ SETTINGS_EXPORT = [
 
 
 # These settings are for connection to InterSystems APIs for Health Information Exchanges
-# Data is received as CCDA and converted to FHIR.  You don't need this information.
-
+# Data is received as CCDA and converted to FHIR.  You don't need this
+# information.
 
 
 HIE_TOKEN_API_URI = env('HIE_TOKEN_API_URI',
