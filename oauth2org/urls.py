@@ -4,8 +4,8 @@ from django.urls import path
 from django.conf.urls import include, url
 from django.contrib.auth import views as auth_views
 from apps.home.views import authenticated_home
-from oauth2_provider import views
-from apps.hie.decorators import check_ial_before_allowing_authorize
+from oauth2_provider import viewsia
+from apps.hie.decorators import check_l_before_allowing_authorize
 # from django.views.generic import TemplateView
 # from . import signals  # noqa
 from .utils import IsAppInstalled
