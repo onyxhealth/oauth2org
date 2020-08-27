@@ -24,23 +24,6 @@ def checkObjectId(s):
     return True
 
 
-def run_aggregation_pipeline(database_name, collection_name, pipeline):
-    result = False
-    mongodb_client_url = getattr(settings, 'MONGODB_CLIENT',
-                                 'mongodb://localhost:27017/')
-    mc = MongoClient(mongodb_client_url)
-    db = mc[str(database_name)]
-    collection = db[str(collection_name)]
-
-    # explain = db.command('aggregate', collection, pipeline=pipeline, explain=True)
-    # print explain
-    collection.aggregate(pipeline)
-
-    # print agg_result
-    result = True
-    return result
-
-
 def to_json(results_dict):
     return json.dumps(results_dict, indent=4, default=json_util.default)
 

@@ -66,9 +66,10 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.testclient',
     'apps.api',  # Dummy CDA App
-    'apps.fhirproxy',
-    'apps.hie',
+    # 'apps.fhirproxy', # Used for MS Azure backend.
+    # 'apps.hie', Intersystems HIE support is not activated by default.
     'apps.provider_directory',
+    'apps.patientface_api',
     # 'apps.adt',
 
     # 3rd Party ---------------------------------------------------
@@ -234,9 +235,7 @@ SOCIAL_AUTH_PIPELINE = [
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
     'apps.accounts.pipeline.oidc.save_profile',
-    'apps.fhirproxy.pipeline.identifiers_to_crosswalk.set_crosswalk_with_id_token',
-    'apps.verifymyidentity.pipeline.save_profile.save_profile',
-    'apps.verifymyidentity.pipeline.save_mrn.save_mrn',
+    'apps.patientface_api.pipeline.identifier_to_crosswalk.set_crosswalk_with_id_token',
 ]
 
 if DEBUG:
@@ -268,11 +267,10 @@ LOGIN_URL = '/social-auth/login/verifymyidentity-openidconnect'
 
 EXTERNAL_AUTH_NAME = "Verify My Identity / OpenID Connect"
 
-PROJECT_NAME = env('DJANGO_PROJECT_NAME', 'OAuth2org instance')
+PROJECT_NAME = env('DJANGO_PROJECT_NAME', 'instance of OAuth2org')
 
 
-TOP_LEFT_TITLE = env('DJANGO_TOP_LEFT_TITLE',
-                     'OAuth2.org')
+TOP_LEFT_TITLE = env('DJANGO_TOP_LEFT_TITLE', 'OAuth2.org')
 
 APPLICATION_TITLE = env('DJANGO_APPLICATION_TITLE',
                         'OAuth2.org')
@@ -284,7 +282,7 @@ CONTACT_PHONE = env('CONTACT_PHONE', '1-888-871-1017')
 
 CONTACT_EMAIL = env('CONTACT_EMAIL', 'sales@videntity.com')
 
-KILLER_APP_URI = env('KILLER_APP_URI', 'https://app.microphr.com')
+KILLER_APP_URI = env('KILLER_APP_URI', 'https://example.com')
 
 ORGANIZATION_URI = env('DJANGO_ORGANIZATION_URI', 'https://videntity.com')
 POLICY_URI = env('DJANGO_POLICY_URI',
@@ -382,15 +380,12 @@ SETTINGS_EXPORT = [
     'DATA_SOURCE_TITLE_SHORT',
     'TOP_LEFT_TITLE',
     'KILLER_APP_URI',
-    'RESOURCES',
-    'VITALSIGNS'
 ]
 
 
-# These settings are for connection to InterSystems APIs for Health Information Exchanges
-# Data is received as CCDA and converted to FHIR.  You don't need this
-# information.
-
+# These settings are for connection to InterSystems APIs for Health Information Exchange (HIE)
+# These settings are not used if you have an actual FHIR server like HAPI
+# or Microsoft.
 
 HIE_TOKEN_API_URI = env('HIE_TOKEN_API_URI',
                         'https://integration.example.com:6443/')
@@ -423,16 +418,17 @@ HIE_CLIENT_CERT_FILEPATH = env('HIE_CLIENT_CERT_FILEPATH', 'client-cert.pem')
 HIE_CLIENT_PRIVATE_KEY_FILEPATH = env(
     'HIE_CLIENT_PRIVATE_KEY_FILEPATH', 'client-private-key.pem')
 
-# End of InterSystems HIE settings
-
 
 # CDA2FHIR is use to convert Intersystems CDA. At the time of this writing
 # Intersystems doesn't have a usable FHIR interface.
-
+# Again not used if you have an actual FHIR server like HAPI or Microsoft.
 # Should be operated behind a firewall and in ssl/https in production.
-CDA2FHIR_SERVICE = env('CDA2FHIR_SERVICE',
-                       'http://cda2fhirservice-env.example.com')
+CDA2FHIR_SERVICE = env(
+    'CDA2FHIR_SERVICE', 'http://cda2fhirservice-env.example.com')
 CDA2FHIR_SERVICE_URL = "%s/api/convert" % (CDA2FHIR_SERVICE)
+
+# End of InterSystems HIE setting
+
 
 # Expire in 30 minutes
 SESSION_COOKIE_AGE = int(env('SESSION_COOKIE_AGE', int(30 * 60)))
@@ -442,22 +438,17 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_SAMESITE = None
 
 
+# Proxy HAPI or other FHIR Server
 # FHIR Server to Proxy (Default) - with trailing slash on HAPI
 
 DEFAULT_FHIR_SERVER = env('DEFAULT_FHIR_SERVER',
-                          "http://fhir-test.sharemy.health:8080/fhir/baseDstu3/")
+                          "http://hapi.example.com:8080/fhir/baseDstu3/")
 
 DEFAULT_FHIR_URL_PREFIX = env('DEFAULT_FHIR_URL_PREFIX', "/fhir/baseDstu3")
-
-
-# Proxied requests will  have these URLs swapped.
+# Proxied requests will have these URLs swapped.
 DEFAULT_OUT_FHIR_SERVER = HOSTNAME_URL + DEFAULT_FHIR_URL_PREFIX
 
-
-# DEFAULT_FHIR_SERVER = "http://fhir-test.sharemy.health:8080/fhir"
-# DEFAULT_OUT_FHIR_SERVER = HOSTNAME_URL + "/fhir/R4"
-
-
+# Regardless of backend suupport, only support these.
 FHIR_RESOURCES_SUPPORTED = (
     'Patient',
     'Observation',
@@ -475,11 +466,10 @@ FHIR_RESOURCES_SUPPORTED = (
     'Coverage',
     'ExplanationOfBenefit')
 
-DEFAULT_SAMPLE_FHIR_ID = "472"
-
 
 # Backend FHIR server client credentials
 # These may be used to connect to Microsoft Azure Healthcare APIs
+# Not needed for HAPI.
 
 BACKEND_FHIR_CLIENT_ID = env(
     'BACKEND_FHIR_CLIENT_ID', "change-me")
@@ -490,41 +480,13 @@ BACKEND_FHIR_RESOURCE = env('BACKEND_FHIR_RESOURCE',
 BACKEND_FHIR_TOKEN_ENDPOINT = env('BACKEND_FHIR_TOKEN_ENDPOINT',
                                   "https://login.microsoftonline.com/example1234/oauth2/token")
 
-
+# Change if using AWS and in another region.
 AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION', 'us-east-1')
 
 # Blank means skip EC2.
 EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES = env(
     'EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES', "EC2_PARAMSTORE")
 
-
-RESOURCES = ['Account', 'ActivityDefinition', 'AllergyIntolerance', 'AdverseEvent', 'Appointment',
-             'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle',
-             'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse',
-             'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest',
-             'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent',
-             'Contract', 'Coverage', 'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent',
-             'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest',
-             'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint',
-             'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile',
-             'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition',
-             'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy',
-             'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage',
-             'List', 'Location', 'Measure', 'MeasureReport', 'Media',
-             'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest',
-             'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem',
-             'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome',
-             'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation',
-             'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure',
-             'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance',
-             'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson',
-             'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'RiskAssessment',
-             'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen',
-             'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery',
-             'SupplyRequest', 'Task', 'TestScript', 'TestReport', 'ValueSet', 'VisionPrescription']
-
-VITALSIGNS = ['3141-9', '8302-2', '39156-5',
-              '8480-6', '8462-4', '8867-4', '8310-5', '9279-1']
 
 VPC_ENV = env('VPC_ENV', "UNKNOWN")
 ROLE_TYPE = env('ROLE_TYPE', "NOT_SET")
