@@ -1,13 +1,10 @@
-from django.contrib.auth.models import Group
+
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
-from apps.accounts.models import UserProfile
 from oauth2_provider.models import Application
 from oauth2_provider.models import AccessToken
 from django.utils import timezone
 from datetime import timedelta
 from django.conf import settings
-
 
 
 def create_application():
