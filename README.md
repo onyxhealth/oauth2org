@@ -84,14 +84,14 @@ Create a superuser (Optional)
 Create a Sample Application (So the test Client application  will work as expected.)
 
 
-    python manage.py create_test_user_and_application
+    python manage.py create_test_application
 
 Be Sure to register this application in the OIDC Server and then set the values in your `.env`.
 For example your `.env` file may contain the following lines:
 
 
-     export SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_KEY="sharemyhealth-1kjdfkdjfasasas"
-     export SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_SECRET="sharemyhealth-dsjkfj87234ndsh89r3b434y8dTWocG"
+     export SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_KEY="oauth2org-1kjdfkdjfasasas"
+     export SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_SECRET="oauth2org-dsjkfj87234ndsh89r3b434y8dTWocG"
      export SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_OIDC_ENDPOINT="http://verifymyidentity:8000"
 
 If running this server and the OIDC server locally lom the same machine for development,
