@@ -26,7 +26,7 @@ urlpatterns = [
         check_ial_before_allowing_authorize(views.AuthorizationView.as_view()), name="authorize"),
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^.well-known/', include('apps.wellknown.urls')),
-
+    path('dcrp/', include('apps.dynamicreg.urls')),
     # Sample API
     url(r'^api/', include('apps.api.urls')),
 
