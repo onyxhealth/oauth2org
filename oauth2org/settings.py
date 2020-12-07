@@ -61,12 +61,13 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'rest_framework',
     'apps.home',
+    'apps.dynamicreg',
     'apps.wellknown',
     'apps.verifymyidentity',
     'apps.accounts',
     'apps.testclient',
     'apps.api',  # Dummy CDA App
-    # 'apps.fhirproxy', # Used for MS Azure backend.
+    # 'apps.fhirproxy', # Used for Microsoft Azure backend.
     # 'apps.hie', Intersystems HIE support is not activated by default.
     'apps.provider_directory',
     'apps.patientface_api',
@@ -219,6 +220,8 @@ AUTHENTICATION_BACKENDS = (
     # 'social_core.backends.google_openidconnect.GoogleOpenIdConnect',
     'apps.verifymyidentity.backends.verifymyidentity.VerifyMyIdentityOpenIdConnect',
     'django.contrib.auth.backends.ModelBackend',
+    # Okta OIDC support
+    'social_core.backends.okta_openidconnect.OktaOpenIdConnect',
 )
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -241,6 +244,7 @@ SOCIAL_AUTH_PIPELINE = [
 if DEBUG:
     SOCIAL_AUTH_PIPELINE.append('social_core.pipeline.debug.debug')
 
+# Verify My Identity support
 SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_KEY = env(
     'SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_KEY',
     'oauth2org@verifymyidentity')
@@ -252,6 +256,15 @@ SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_OIDC_ENDPOINT = env(
     'SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_OIDC_ENDPOINT',
     'http://verifymyidentity:8000')
+
+# Okta Support
+SOCIAL_AUTH_OKTA_OPENIDCONNECT_API_URL = env("SOCIAL_AUTH_OKTA_OPENIDCONNECT_API_URL",
+                                             'https://example.okta.com/oauth2')
+SOCIAL_AUTH_OKTA_OPENIDCONNECT_KEY = env('SOCIAL_AUTH_OKTA_OPENIDCONNECT_KEY', '')
+SOCIAL_AUTH_OKTA_OPENIDCONNECT_SECRET = env('SOCIAL_AUTH_OKTA_OPENIDCONNECT_SECRET', '')
+SOCIAL_AUTH_PING_OPENIDCONNECT_KEY = env('SOCIAL_AUTH_PING_OPENIDCONNECT_KEY', '')
+SOCIAL_AUTH_PING_OPENIDCONNECT_SECRET = env('SOCIAL_AUTH_PING_OPENIDCONNECT_SECRET', '')
+
 
 # Set to True when using in a reverse proxy such as Gunicorn and Nginx
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = bool_env(
@@ -330,8 +343,8 @@ GRANT_TYPES = (
 )
 
 
-CALL_MEMBER = "member"
-CALL_MEMBER_PLURAL = "members"
+CALL_MEMBER = "person"
+CALL_MEMBER_PLURAL = "people"
 CALL_ORGANIZATION = "organization"
 CALL_ORGANIZATION_PLURAL = "organizations"
 
@@ -543,3 +556,10 @@ LOGGING = {
         },
     },
 }
+
+PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME = env(
+    'PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME', "fhir4")
+PROVIDER_DIRECTORY_SEARCH_LIMIT = int(env(
+    'PROVIDER_DIRECTORY_SEARCH_LIMIT', "3"))
+
+LOGIN_RATELIMIT = env('LOGIN_RATELIMIT', '100/h')
