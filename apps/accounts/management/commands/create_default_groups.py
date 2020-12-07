@@ -3,8 +3,9 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
 __author__ = "Alan Viars"
+# Copyright Videntity Systsme Inc.
 
-groups = ["ApplicationDeveloper", ]
+groups = ["ApplicationDeveloper", "DynamicClientRegistrationProtocol"]
 
 
 def create_groups():
