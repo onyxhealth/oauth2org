@@ -1,25 +1,29 @@
 # oauth2org - An OAuth2 Provider and FHIR Proxy
 
-This project is a reusable OAuth2 Server and FHIR Server in Django.
-It uses the Django OAuth Toolkit as its base.
+This project is a "batteries included", reusable OAuth2 Server and FHIR Proxy. It is written in Django 2/3  and Python 3. It uses the Django OAuth Toolkit as its base.
 
 Here is some of what you can do:
 
-* Developer Portal
-* User Authorization Portal
-* Proxy other APIs thourg OAuth2 including FHIR
-* Developer Portal - Register and manage applications (OAuth2 Clients)
-* OpenID Connect Relying Party: Connect this service to an upstream OpendID Connect Provider or other account system.
-* Connect an HIE such as InterSystems and convert CDA2FHIR
-* Build your own! You can build virtually any RESTful API or app
-on top of this base project.
+* Build B2C and B2B APIs.
+* User Authorization Portal - A customizable member/user authorization screen where they agree to share x,y,z with with appliaction ABC Wizbang.  
+* A proxy for other APIs via OAuth2.
+* A proxy FHIR sever for HAPI, SmileCDR, Microsoft/Azure FHIR, or tother FHIR Server.
+* A Developer Portal - Register and manage applications (OAuth2 Clients)
+* An OpenID Connect Relying Party: Connect this service to an upstream OpendID Connect Provider or other account system. OAuth2org has built in support for VerifyMyIdentity, Okta, and Google.
+* Connect a Health Infortmation Exchange(HIE). Built in support for InterSystems is pre-installed.
+* Ingest HL7 v2/ ADT Messages and automatically create APIs.
+* Build MongoDB-based APIs, without writing any code, using the pre-installed Djmongo plugin app.  
+* Build whatever you want! You can build virtually any RESTful API or app
+on top of this base project. Use Django REST Framework or write your own from scatch.
 
-Project History: This tool is based off of work done on behalf of the
+Project History
+---------------
+
+This tool is based off of work done on behalf of the
 Office of the National Coordinator for Health Information
 Technology (HHS ONC) and the  Centers for Medicare and Medicaid
-Services (HHS CMS). It was built provider consumer-facing APIs
-and shares a common code base with the CMS Blue Button 2.0 API,
-but this version is designed for re-use.
+Services (HHS CMS). It is a "hard fork" of the CMS Blue Button 2.0 API,
+but shares much of the underlying code.  This version was designed for designed for re-use by  EHRs, insurance companies, states, HIEs, etc.)
 
 
 Installation
