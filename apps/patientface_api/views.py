@@ -39,7 +39,7 @@ def fhir_endpoint_with_id(request, fhir_resource, id):
     cw = Crosswalk.objects.get(
         user=request.resource_owner, user_id_type="PATIENT_ID_FHIR")
 
-    if cw.fhir_patient_id != id and fhir_resource is "Patient":
+    if cw.fhir_patient_id != id and fhir_resource == "Patient":
         # Do not allow mismatched token/user/fhir ID
         raise Http404
 
