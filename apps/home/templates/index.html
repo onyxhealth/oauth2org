@@ -38,25 +38,10 @@
                 <p>These APIs are configured for this instance.</p>
                  <br><br>
                 <ul>
-                <li>FHIR Patient Everything Bundle | <a href="https://www.hl7.org/fhir/operation-patient-everything.html">docs</a>
-                               <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'get_patient_fhir_content' %}"</pre>
+                <li>FHIR Patient Resource | <a href="https://www.hl7.org/fhir/patient.html">docs</a>
+                               <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'fhir_endpoint_with_id_oauth' 'Patient' 'some-fhir-patient-id' %}"</pre>
                                </li>
                                
-                <li>FHIR Resource Specific Bundle (Practitioner resource provided as an example)
-                               <pre>curl -H "Authorization: Bearer some-user-bound-token"{{settings.HOSTNAME_URL}}{% url 'get_fhir_resource_bundle' 'Practitioner' %}"</pre>
-                               </li>
-           
-                <li>FHIR VitalSigns Specific Bundle 
-                               <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_vital_signs_bundle' %}"</pre>
-                               </li>
-           
-                <li>FHIR LabResults Bundle 
-                               <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_lab_results_bundle' %}"</pre>
-                               </li>
-           
-                <li>User Profile | <a href="https://openid.net/specs/openid-connect-core-1_0.html#UserInfo">docs</a>
-                               <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'user_profile' %}"</pre>
-                               </li>
            
                 <li>OAuth2 Discovery | <a href="https://tools.ietf.org/html/rfc8414">docs</a>
                                <pre>curl "{{settings.HOSTNAME_URL}}{% url 'oauth_authorization_server' %}"</pre>

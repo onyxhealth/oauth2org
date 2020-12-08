@@ -54,8 +54,6 @@ class UserProfile(models.Model):
     most_recent_id_token_payload = models.TextField(
         blank=True, default="", max_length=4096)
 
-    verifying_agent_email = models.EmailField(default="")
-
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -88,6 +86,14 @@ class UserProfile(models.Model):
         if not doc:
             doc = []
         return doc
+
+    @property
+    def fhir_patient_id(self):
+        doc = self.id_token_payload.get('document')
+        for d in doc:
+            if d["type"] == "PATIENT_ID_FHIR":
+                return d["num"]
+        return None
 
     @property
     def given_name(self):

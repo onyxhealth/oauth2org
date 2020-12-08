@@ -36,7 +36,7 @@
      <li>expires_at: {{token_response.expires_at}}  </li>
      <li>expires_in: {{token_response.expires_in}}  </li>
      <li>scope: {{token_response.scope}}  </li>
-     <li>patient_id: {{userinfo.patient}} </li>
+     <li>FHIR patient_id: {{userinfo.patient}} </li>
      <li>given_name: {{request.user.first_name}}  </li>
      <li>family_name: {{request.user.last_name }}   </li>
 					
@@ -50,27 +50,11 @@ After they expire you will need to go through Authorization process again.
 					
 
      <ul>
-     <li>FHIR Patient Everything Bundle 
-					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_patient_fhir_content' %}"</pre>
+     <li>FHIR Patient Resource 
+					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'fhir_endpoint_with_id_oauth' 'Patient' userinfo.patient %}"</pre>
 					</li>
 					
-     <li>FHIR Resource Specific Bundle (Practitioner resource provided as an example)
-					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_resource_bundle' 'Practitioner' %}"</pre>
-					</li>
-
-     <li>FHIR VitalSigns Specific Bundle 
-					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_vital_signs_bundle' %}"</pre>
-					</li>
-
-     <li>FHIR LabResults Bundle 
-					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_fhir_lab_results_bundle' %}"</pre>
-					</li>
-
-
-     <li>Backlend API Responses 
-					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'get_backend_api_responses' %}"</pre>
-					</li>
-
+  
      <li>User Profile
 					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'user_profile' %}"</pre>
 					</li>

@@ -59,22 +59,14 @@
           {% ifequal id_token_payload.ial  "2" %}
           
             	<li><a href="{% url 'oauth2_provider:authorized-token-list' %}"> <i class="fa fa-legal"></i> Application Access Tokens</a>
-              <li><a href="{% url 'do_fetch_patient_data' %}"> <i class="fa fa-download"></i> Connect to {{settings.DATA_SOURCE_TITLE_SHORT}}</a></li>
-              <li><a href="{% url 'fetch_cda' %}"> <i class="fa fa-download"></i> Refresh data from  {{settings.DATA_SOURCE_TITLE_SHORT}}</a></li>
-            	<li><a href="{% url 'get_cda_raw_test' %}"> <i class="fa fa-download"></i> Get CDA (No auto-refresh)</a></li>
-              <li><a href="{% url 'get_patient_fhir_content_test' %}"> <i class="fa fa-download"></i> Get FHIR 3 Patient Everything Bundle</a></li>
-              <li><a href="{% url 'get_backend_api_responses_test' %}"> <i class="fa fa-download"></i> Get Backend API Responses</a></li>
+            
              
           {% endifequal %}
 
 
           {% ifequal id_token_payload.ial  "3" %}
             	<li><a href="{% url 'oauth2_provider:authorized-token-list' %}"> <i class="fa fa-legal"></i> Application Access Tokens</a>
-              <li><a href="{% url 'do_fetch_patient_data' %}"> <i class="fa fa-download"></i> Connect to {{settings.DATA_SOURCE_TITLE_SHORT}}</a></li>
-              <li><a href="{% url 'fetch_cda' %}"> <i class="fa fa-download"></i> Refresh data from {{settings.DATA_SOURCE_TITLE_SHORT}}</a></li>
-              <li><a href="{% url 'get_cda_raw_test' %}"> <i class="fa fa-download"></i> Get CDA (No auto-refresh)</a></li>
-              <li><a href="{% url 'get_patient_fhir_content_test' %}"> <i class="fa fa-download"></i> Get FHIR 3 Patient Everything Bundle</a></li>
-              <li><a href="{% url 'get_backend_api_responses_test' %}"> <i class="fa fa-download"></i> Get Backend API Responses</a></li>
+
           {% endifequal %}
 
 

@@ -41,7 +41,6 @@ def callback(request):
                              'help': 'Try authorizing again.'}, status=500)
     request.session['token'] = token
     response['token_response'] = OrderedDict()
-
     for k, v in token.items():
         if k != "scope":
             response['token_response'][k] = v
@@ -60,8 +59,8 @@ def callback(request):
     response['oauth_authorization_server'] = host + \
         reverse('oauth_authorization_server')
 
-    response['fhir_metadata_uri'] = host + \
-        reverse('fhir_metadata_uri')
+    if 'fhir_metadata_uri' in response.keys():
+        response['fhir_metadata_uri'] = host + reverse('fhir_metadata_uri')
 
     response['test_page'] = host + reverse('test_links')
     return success(request, response)

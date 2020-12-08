@@ -3,45 +3,15 @@ import logging
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from jwkest.jwt import JWT
-from ..hie.models import HIEProfile
-from ..hie.hixny_requests import (acquire_access_token, consumer_directive, get_clinical_document,
-                                  fetch_patient_data)
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponse
-from django.http import HttpResponseRedirect, FileResponse
-from django.urls import reverse
+from django.http import JsonResponse
 
 # Copyright Videntity Systems Inc.
 
 __author__ = "Alan Viars"
 
-logger = logging.getLogger('smh_debug')
-
-
-@login_required
-def fetch_cda(request):
-    hp, g_o_c = HIEProfile.objects.get_or_create(user=request.user)
-    # print(hp)
-
-    if not hp.mrn:
-        msg = _("Your identity is not yet bound to a resource.")
-        messages.warning(request, msg)
-        return HttpResponseRedirect(reverse('home'))
-    access_token = acquire_access_token()
-    # print(access_token)
-    result = consumer_directive(
-        access_token['access_token'], hp, request.user.userprofile)
-    result = get_clinical_document(access_token['access_token'], hp)
-    # print(result)
-    return FileResponse(result['response_body'],
-                        content_type='application/xml')
-
-
-@login_required
-def do_fetch_patient_data(request):
-    result = fetch_patient_data(request.user)
-    return HttpResponse(str(result))
+logger = logging.getLogger('oauth2org_debug')
 
 
 @login_required
@@ -80,13 +50,10 @@ def authenticated_home(request):
             id_token = "No ID token."
             parsed_id_token = {'sub': '', 'ial': '1'}
 
-        hp, g_o_c = HIEProfile.objects.get_or_create(
-            user=request.user)
-
         if parsed_id_token.get('ial') not in ('2', '3'):
             # redirect to get verified
             messages.warning(request, 'Your identity has not been verified. \
-                             This must be completed prior to access to personal health information.')
+                             This must be completed prior to access to Personal Health Information.')
 
         try:
             profile = request.user.userprofile
@@ -94,7 +61,7 @@ def authenticated_home(request):
             profile = None
 
         # this is a GET
-        context = {'name': name, 'profile': profile, 'hp': hp,
+        context = {'name': name, 'profile': profile,
                    'id_token': id_token,
                    'id_token_payload': parsed_id_token}
 

@@ -5,7 +5,7 @@ from oauth2_provider.decorators import protected_resource
 from django.contrib.auth.decorators import login_required
 from collections import OrderedDict
 from django.conf import settings
-from ...fhirproxy.models import Crosswalk
+from ...patientface_api.models import Crosswalk
 from ..models import UserProfile
 
 # TODO: include IAL from upstream IDP.
@@ -81,11 +81,9 @@ def oidc_userprofile(request):
     return JsonResponse(data)
 
 
-# TODO Work out crosswalk.
 def get_fhir_id(user):
-
     r = None
     if Crosswalk.objects.filter(user=user).exists():
-        c = Crosswalk.objects.get(user=user)
+        c = Crosswalk.objects.get(user=user, user_id_type="PATIENT_ID_FHIR")
         r = c.fhir_patient_id
     return r
