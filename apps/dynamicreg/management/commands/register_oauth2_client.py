@@ -6,6 +6,7 @@ import json
 import uuid
 
 __author__ = "Alan Viars"
+# Copyright Videntity Systems, Inc
 
 User = get_user_model()
 

@@ -1,6 +1,6 @@
-# oauth2org - An OAuth2 Provider and FHIR Proxy
+# oauth2org - An OAuth2 Provider (Server) and FHIR Proxy with "Batteries Included"
 
-This project is a "batteries included", reusable OAuth2 Server and FHIR Proxy. It is written in Django 2/3  and Python 3. It uses the Django OAuth Toolkit as its base.
+The OAuth2org project is a "batteries included", reusable OAuth2 Server and FHIR Proxy. It is written in Django 2/3  and Python 3. It uses the Django OAuth Toolkit as its base.
 
 Here is some of what you can do:
 
