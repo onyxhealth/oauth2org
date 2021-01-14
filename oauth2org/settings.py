@@ -72,7 +72,8 @@ INSTALLED_APPS = [
     'apps.provider_directory',
     'apps.patientface_api',
     # 'apps.adt',
-
+    # 'apps.dot_ext',
+    # 'apps.capabilities',
     # 3rd Party ---------------------------------------------------
     'widget_tweaks',
     'corsheaders',
