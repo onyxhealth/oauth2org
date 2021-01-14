@@ -12,7 +12,7 @@ SEX_CHOICES = (('male', 'Male'), ('female', 'Female'), ('', 'Unspecified'))
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE,
+    user = models.OneToOneField(get_user_model(), related_name='userprofile', on_delete=models.CASCADE,
                                 db_index=True, null=False)
     subject = models.CharField(max_length=64, default='', blank=True,
                                help_text='Subject for identity token',
