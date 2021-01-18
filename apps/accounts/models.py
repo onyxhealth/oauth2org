@@ -96,6 +96,10 @@ class UserProfile(models.Model):
         return None
 
     @property
+    def fhir_user(self):
+        return "%s%s" % (self.user.fhir_patient_id)
+
+    @property
     def given_name(self):
         return self.user.first_name
 

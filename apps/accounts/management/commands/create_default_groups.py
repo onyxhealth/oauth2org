@@ -19,7 +19,7 @@ def create_groups():
         if group == "ApplicationDeveloper":
             # Add permissions to group
             content_type = ContentType.objects.get(
-                app_label='oauth2_provider', model='application')
+                app_label='dot_ext', model='application')
             add = Permission.objects.get(codename='add_application',
                                          content_type=content_type)
             change = Permission.objects.get(codename='change_application',

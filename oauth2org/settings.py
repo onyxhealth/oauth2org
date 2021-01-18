@@ -20,22 +20,22 @@ from .utils import bool_env
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env(
-    'SECRET_KEY', '@+ttixefm9-bu1eknb4k^5dj(f1z0^97b$zan9akdr^4s8cc54')
+# SECURITY WARNING: keep the secret key used in production a secret!
+SECRET_KEY = env('SECRET_KEY', '@+ttixefm9-bu1eknb4k^5dj(f1z0^97b$zan9akdr^4s8cc54')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool_env(env('DEBUG', True))
 
+# PYTHON SOCIAL AUTH security setting.
 if DEBUG:
     # Never run a production system in DEBUG or with insecure transport turned
     # off (i.e. http instead of https)
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+# Allow everyone
 ALLOWED_HOSTS = ['*', ]
 
 # A function to install app only if they are installed.
@@ -52,46 +52,80 @@ def _enable_conditional(application):
 
 # Application definition
 INSTALLED_APPS = [
+
+    # Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'oauth2_provider',
-    'rest_framework',
-    'apps.home',
-    'apps.dynamicreg',
-    'apps.wellknown',
-    'apps.verifymyidentity',
-    'apps.accounts',
-    'apps.testclient',
-    'apps.api',  # Dummy CDA App
-    # 'apps.fhirproxy', # Used for Microsoft Azure backend.
+
+    # In-house applications
+    # Djmongo is installed automatically if the django-djmongo
+    # packages is installed in the environment
+    # Access Djmongo by going to the url /djm on your instance.
+    # A running MongoDB server is also needed.
+    # Set the MONGODB_CLIENT setting for your environment.
+
+
+    # Required Inhouse apps. These are generally necessary for expected Oauth2 provider behavior.
+    # Running only some of these may result in errors and/or abnormal behavior.
+
+    # This is the core sublassing of Django OAuth Toolkit (DoT)'s abstract classes.
+    # SMART_ON_FHIR customizations are here .
+    'apps.dot_ext.apps.dot_extConfig',  # Reference to 'apps.dot_ext'. This minor deviation added for an import workaround.
+    'apps.accounts',  # For basic account management.
+    'apps.home',  # Home screen
+    'apps.dynamicreg',  # Dynamic Client Reg Protocol
+    'apps.wellknown',  # /.well-known/ URLs
+    'apps.verifymyidentity',  # Upstream Identity provider
+    'apps.testclient',  # Tests the Patient Facing API by functioning as a client (3rd party app).
+
+    # Oauth2 Provider specific apps.  These must all be active for a patient-facing config.
+    'apps.authorization',  # Core
+    'apps.fhir.bluebutton',  # Core Crosswalk table for HAPI-based backend.
+    'apps.capabilities',  # DoT Extensions for scopes
+    'apps.pkce',  # PKCE support. TODO move in/to DoT.
+
+
+    # Enterprise feature apps not enabled by default
+    # These are advanced features for enterprise customers. These are not enabled.
+    # by default.
+    # 'apps.api',  # CDA API App is not enabled by default.
     # 'apps.hie', Intersystems HIE support is not activated by default.
-    'apps.provider_directory',
+    # 'apps.fhirproxy', # Used for Microsoft Azure backend. Not enabled by default.
+    # 'apps.adt', # Accept ADT/x12 message stream and build identifier responses.
+
+
+
+    # Enterprise feature apps enabled for developers and testing
+    # Provider_directory is an in-house API based on MongoDB. (under active development)
+    'apps.provider_directory',  # this application demonstrates the power
+    # An in-house Patient facing API that is based in MongoDB. (under active development)
     'apps.patientface_api',
-    # 'apps.adt',
-    # 'apps.dot_ext',
-    # 'apps.capabilities',
-    # 3rd Party ---------------------------------------------------
-    'widget_tweaks',
-    'corsheaders',
-    'bootstrapform',
-    'social_django',  # Python Social Auth
+
+    # 3rd Party Python/django libraries managed by others ---------------------------
+    # Therese are all generally required unless noted otherwise.
+    # Running only some of these may result in errors and/or abnormal behavior.
+    'oauth2_provider',  # Django OAuth Toolkit (DoT) . Must come after 'apps.dot_ext'.
+    'waffle',  # feature toggle.
+    'rest_framework',  # REST Framework.  You can create APIs with this too!
+    'widget_tweaks',  # UI lib
+    'corsheaders',    # CORS Headers
+    'bootstrapform',  # generate bootstrap forms
+    # Python Social Auth. # Python Social Auth is used to communicate to an upsteam Identity Provider (IdP)
+    'social_django',  # VerifyMyIdentity is the default configuration, but other OIDC  IdPs are supported such as Okta and Google.
 ]
 
-# Add djmongo if it is already installed.
+# Add Djmongo if it is already installed.
 _enable_conditional('djmongo')
 _enable_conditional('djmongo.console')
 _enable_conditional('djmongo.read')
 _enable_conditional('djmongo.dataimport')
 _enable_conditional('djmongo.write')
 _enable_conditional('djmongo.aggregations')
-MONGODB_CLIENT = env('MONGODB_CLIENT', 'mongodb://localhost:27017/')
 
-# If False, only show all DBs. If true show DB's with matching group.
-DJMONGO_DB_GROUPS = bool_env(env('DJMONGO_DB_GROUPS', True))
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -174,6 +208,17 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGOUT_REDIRECT_URL = 'home'
 
 
+# Change these for production
+USER_ID_SALT = env('DJANGO_USER_ID_SALT', "6E6F747468657265616C706570706572")
+USER_ID_ITERATIONS = int(env("DJANGO_USER_ID_ITERATIONS", "2"))
+
+USER_ID_TYPE_CHOICES = (('H', 'HICN'),
+                        ('M', 'MBI'))
+
+USER_ID_TYPE_DEFAULT = "H"
+DEFAULT_SAMPLE_FHIR_ID = env("DJANGO_DEFAULT_SAMPLE_FHIR_ID", "-20140000008325")
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -205,8 +250,50 @@ AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', 'change-me')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', 'change-me')
 
 
-# OAUTH SETTINGS
+# Django Oauth Tookit settings and customizations
+# Application model settings
+APP_LOGO_SIZE_MAX = env('APP_LOGO_SIZE_MAX', '100')
+APP_LOGO_WIDTH_MAX = env('PP_LOGO_WIDTH_MAX', '128')
+APP_LOGO_HEIGHT_MAX = env('APP_LOGO_HEIGHT_MAX', '128')
+
+OAUTH2_PROVIDER_APPLICATION_MODEL = 'dot_ext.Application'
+OAUTH2_PROVIDER_GRANT_MODEL = 'oauth2_provider.Grant'
 OAUTH2_PROVIDER = {
+    'OAUTH2_VALIDATOR_CLASS': 'oauth2org.oauth2_validators.SingleAccessTokenValidator',
+    'OAUTH2_SERVER_CLASS': 'apps.dot_ext.oauth2_server.Server',
+    'SCOPES_BACKEND_CLASS': 'apps.dot_ext.scopes.CapabilitiesScopes',
+    'OAUTH2_BACKEND_CLASS': 'apps.dot_ext.oauth2_backends.OAuthLibSMARTonFHIR',
+    'ALLOWED_REDIRECT_URI_SCHEMES': ['https', 'http'],
+}
+
+# These choices will be available in the expires_in field
+# of the oauth2 authorization page.
+DOT_EXPIRES_IN = (
+    (86400 * 365 * 5, _('5 Years')),
+    (86400, _('1 Day')),
+    (86400 * 7, _('1 Week')),
+    (86400 * 365, _('1 Year')),
+    (86400 * 365 * 3, _('3 Years')),
+    (86400 * 365 * 10, _('10 Years')),
+    (86400 * 365 * 100, _('Forever')),
+)
+
+# DOT +
+GRANT_AUTHORIZATION_CODE = "authorization-code"
+# GRANT_PASSWORD = "password"
+# GRANT_CLIENT_CREDENTIALS = "client-credentials"
+GRANT_TYPES = (
+    (GRANT_AUTHORIZATION_CODE, _("Authorization code")),
+    # (GRANT_IMPLICIT, _("Implicit")),
+    # (GRANT_PASSWORD, _("Resource owner password-based")),
+    # (GRANT_CLIENT_CREDENTIALS, _("Client credentials")),
+)
+
+# List of beneficiary personal information resource type scopes
+BENE_PERSONAL_INFO_SCOPES = ["patient/Patient.read", "profile"]
+
+# OAUTH SETTINGS  - OLD Settings
+""" OAUTH2_PROVIDER = {
     'OAUTH2_VALIDATOR_CLASS': 'oauth2org.oauth2_validators.SingleAccessTokenValidator',
     'SCOPES': {"read": "Read scope",
                "patient/*.read": "Permission to read any resource for the current patient",
@@ -214,7 +301,7 @@ OAUTH2_PROVIDER = {
     'DEFAULT_SCOPES': ['patient/*.read', 'profile'],
     'REQUEST_APPROVAL_PROMPT': 'auto',
     'ACCESS_TOKEN_EXPIRE_SECONDS': int(env('ACCESS_TOKEN_EXPIRE_SECONDS', 315360000))
-}
+ } """
 
 
 AUTHENTICATION_BACKENDS = (
@@ -331,18 +418,6 @@ VMI_SIGNUP_URL = "%s/accounts/create-account/%s/?next=%s" % \
                   APPLICATION_TITLE,
                   HOSTNAME_URL)
 
-# DOT +
-GRANT_AUTHORIZATION_CODE = "authorization-code"
-GRANT_IMPLICIT = "implicit"
-# GRANT_PASSWORD = "password"
-# GRANT_CLIENT_CREDENTIALS = "client-credentials"
-GRANT_TYPES = (
-    (GRANT_AUTHORIZATION_CODE, _("Authorization code")),
-    # (GRANT_IMPLICIT, _("Implicit")),
-    # (GRANT_PASSWORD, _("Resource owner password-based")),
-    # (GRANT_CLIENT_CREDENTIALS, _("Client credentials")),
-)
-
 
 CALL_MEMBER = "person"
 CALL_MEMBER_PLURAL = "people"
@@ -394,6 +469,7 @@ SETTINGS_EXPORT = [
     'DATA_SOURCE_TITLE_SHORT',
     'TOP_LEFT_TITLE',
     'KILLER_APP_URI',
+    'FHIR_BASE_URI',
 ]
 
 
@@ -432,13 +508,19 @@ HIE_CLIENT_CERT_FILEPATH = env('HIE_CLIENT_CERT_FILEPATH', 'client-cert.pem')
 HIE_CLIENT_PRIVATE_KEY_FILEPATH = env(
     'HIE_CLIENT_PRIVATE_KEY_FILEPATH', 'client-private-key.pem')
 
+# Default setting for rate limit.
+LOGIN_RATELIMIT = env('LOGIN_RATELIMIT', '100/h')
 
-# CDA2FHIR is use to convert Intersystems CDA. At the time of this writing
+# CDA2FHIR is an add-on, optional component, to this project.
+# See https://github.com/TransparentHealth/cda2fhir-service
+
+
+# is use to convert Intersystems CDA. At the time of this writing
 # Intersystems doesn't have a usable FHIR interface.
 # Again not used if you have an actual FHIR server like HAPI or Microsoft.
 # Should be operated behind a firewall and in ssl/https in production.
-CDA2FHIR_SERVICE = env(
-    'CDA2FHIR_SERVICE', 'http://cda2fhirservice-env.example.com')
+
+CDA2FHIR_SERVICE = env('CDA2FHIR_SERVICE', 'http://cda2fhirservice.example.com')
 CDA2FHIR_SERVICE_URL = "%s/api/convert" % (CDA2FHIR_SERVICE)
 
 # End of InterSystems HIE setting
@@ -462,9 +544,11 @@ DEFAULT_FHIR_URL_PREFIX = env('DEFAULT_FHIR_URL_PREFIX', "/fhir/baseDstu3")
 # Proxied requests will have these URLs swapped.
 DEFAULT_OUT_FHIR_SERVER = HOSTNAME_URL + DEFAULT_FHIR_URL_PREFIX
 
-# Regardless of backend suupport, only support these.
+# For Patient FACING API: Regardless of FHIR backend support, only support these.
 FHIR_RESOURCES_SUPPORTED = (
     'Patient',
+    'Practitioner',
+    'Organization',
     'Observation',
     'Condition',
     'Medication',
@@ -483,7 +567,8 @@ FHIR_RESOURCES_SUPPORTED = (
 
 # Backend FHIR server client credentials
 # These may be used to connect to Microsoft Azure Healthcare APIs
-# Not needed for HAPI.
+# Not needed for HAPI.  Change these value for your Microsoft FHIR
+# server
 
 BACKEND_FHIR_CLIENT_ID = env(
     'BACKEND_FHIR_CLIENT_ID', "change-me")
@@ -497,12 +582,22 @@ BACKEND_FHIR_TOKEN_ENDPOINT = env('BACKEND_FHIR_TOKEN_ENDPOINT',
 # Change if using AWS and in another region.
 AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION', 'us-east-1')
 
-# Blank means skip EC2.
+# Blank means skip the EC2 Paramer store. Default behavior is to rely on
+# local instance's environment variables. The project should read on a .env
+# file from the proijects's root directory. Many ways to accomplish this
+# including with Docker, Gunicorn startup, and others.  If you are not using
+# EC2 Parameter store, you can ignore this setting.
 EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES = env(
     'EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES', "EC2_PARAMSTORE")
 
 
+# Loggin options.
+# VPC values gets added to the loggin format.
+# This helps identify your nodes/workers.
 VPC_ENV = env('VPC_ENV', "UNKNOWN")
+
+# Role Type  gets added to the loggin format.
+# This helps identify the role of your workers.
 ROLE_TYPE = env('ROLE_TYPE', "NOT_SET")
 
 LOGGING = {
@@ -542,14 +637,14 @@ LOGGING = {
     },
     'loggers': {
         # root logger
-        'smh': {
+        'oauth2org': {
             'handlers': ['console', 'logging.handlers.SysLogHandler'],
             'propagate': True,
             'level': 'INFO',
             'formatter': 'verbose',
             'disabled': False,
         },
-        'smh_debug': {
+        'oauth2org_debug': {
             'handlers': ['console', 'logging.handlers.SysLogHandler'],
             'level': 'DEBUG',
             'formatter': 'verbose',
@@ -558,9 +653,40 @@ LOGGING = {
     },
 }
 
-PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME = env(
-    'PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME', "fhir4")
-PROVIDER_DIRECTORY_SEARCH_LIMIT = int(env(
-    'PROVIDER_DIRECTORY_SEARCH_LIMIT', "3"))
 
-LOGIN_RATELIMIT = env('LOGIN_RATELIMIT', '100/h')
+# Djmongo settings.  DjMongo is optional for the OAuth2orfg project.
+# It is a tool for building APIs that suupport CSV and JSON.
+# Djmongo works with OAuth2org.
+# It's UI is accessed by going to http://localhost:8000/djm
+# If False, only show all DBs. If true show DB's with matching group.
+
+DJMONGO_DB_GROUPS = bool_env(env('DJMONGO_DB_GROUPS', True))
+# This set the database connection for all of the Djmongo tools.
+MONGODB_CLIENT = env('MONGODB_CLIENT', 'mongodb://localhost:27017/')
+
+
+# MongoDB-based Provider Directory settings.  The default FHIR database name is "fhir4".
+# Each MongoDB Collection within the database has the name of the FHIR Resource.
+# Practitioner, Organization, Etc.
+# Djmongo is not required for this application to function but it is still
+# reccomended as a management tool.
+PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME = env('PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME', "fhir4")
+
+# Limit the PD search results bu this number
+PROVIDER_DIRECTORY_SEARCH_LIMIT = int(env('PROVIDER_DIRECTORY_SEARCH_LIMIT', "3"))
+
+# Running Patient facing APIs and public APIs on the
+# same host or instance of this software is not supported and not reccomended.
+OPERATIONAL_MODALITY = "patient-access-api"  # Either Other values can be PROVIDER-DIRECTORY-PUBLIC-API
+
+FHIR_BASE_URI = HOSTNAME_URL + env('FHIR_BASE_URI', "/patient-api/fhir/R4/")
+
+# Whitelable branding and styling.  These settings allow you to further brand the project for your user.
+
+# These set the main homepage when a user is not authenticated.
+HOMEPAGE_TEMPLATE = env('HOMEPAGE_TEMPLATE', "index.html")
+# Replace this template to change what your user see's when logged in.
+HOMEPAGE_AUTHENTICATED_TEMPLATE = env('HOMEPAGE_AUTHENTICATED_TEMPLATE', "authenticated-home.html")
+
+# Change this template to brand and style your login or to change the upstream Identity provider.
+LOGIN_TEMPLATE = env('LOGIN_TEMPLATE', "login.html")

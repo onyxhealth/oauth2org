@@ -14,7 +14,8 @@ class Crosswalk(models.Model):
     User to FHIR Patient ID Crosswalk/Mapping
     """
     user = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE, null=True)
+        get_user_model(), on_delete=models.CASCADE, null=True, 
+        related_name="patientface_crosswalk_user")
     fhir_source = models.TextField(default=settings.DEFAULT_FHIR_SERVER,
                                    blank=True)
     issuer = models.TextField(blank=True, default="",
