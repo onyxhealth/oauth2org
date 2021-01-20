@@ -43,3 +43,4 @@ virtualenv==16.0.0
 djangorestframework==3.9.1
 djangorestframework-xml==1.4.0
 django-ratelimit==2.0.0
+django-waffle==2.0.0

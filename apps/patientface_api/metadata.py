@@ -1,7 +1,7 @@
 
 patient_facing_api_metadata_str =\
-"""
-{
+    """
+    {
 	"resourceType": "CapabilityStatement",
 	"id": "oauth2org-patient-facing-api",
 	"text": {
@@ -314,5 +314,5 @@ patient_facing_api_metadata_str =\
 			}
 		]
 	}]
-}
-"""  # noqa: W191, E101, E501
+    }
+"""  # noqa: W191, E101, E501, E122
