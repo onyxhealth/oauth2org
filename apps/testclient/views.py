@@ -14,7 +14,7 @@ from django.views.decorators.cache import never_cache
 __author__ = "Alan Viars"
 
 
-logger = logging.getLogger('hhs_server.%s' % __name__)
+logger = logging.getLogger('oauth2org_server.%s' % __name__)
 
 
 def callback(request):

@@ -4,13 +4,8 @@ from django.views.decorators.http import require_GET
 from oauth2_provider.decorators import protected_resource
 from django.contrib.auth.decorators import login_required
 from collections import OrderedDict
-from django.conf import settings
-from ...patientface_api.models import Crosswalk
 from ..models import UserProfile
-
-# TODO: include IAL from upstream IDP.
-# TO DO: Include the contents of document and address from upstream IDP
-
+from django.conf import settings
 # TODO: Must sort the crosswalk and document IDs.
 
 
@@ -32,12 +27,9 @@ def get_userprofile(user):
     data['picture'] = profile.picture_url
     data['gender'] = profile.gender
     data['birthdate'] = str(profile.birth_date)
-    data['patient'] = get_fhir_id(user)
+    data['patient'] = profile.fhir_patient_id
+    data['fhirUser'] = "%sPatient/%s" % (settings.FHIR_BASE_URI, profile.fhir_patient_id)
     data['iat'] = user.date_joined
-    data['call_member'] = settings.CALL_MEMBER
-    data['call_member_plural'] = settings.CALL_MEMBER
-    data['call_organization'] = settings.CALL_ORGANIZATION
-    data['call_organization_plural'] = settings.CALL_ORGANIZATION_PLURAL
     data['ial'] = profile.identity_assurance_level
     return data
 
@@ -63,12 +55,8 @@ def oidc_userprofile_test(request):
     data['picture'] = profile.picture_url
     data['gender'] = profile.gender
     data['birthdate'] = str(profile.birth_date)
-    data['patient'] = get_fhir_id(user)
+    data['patient'] = profile.fhir_patient_id
     data['iat'] = user.date_joined
-    data['call_member'] = settings.CALL_MEMBER
-    data['call_member_plural'] = settings.CALL_MEMBER
-    data['call_organization'] = settings.CALL_ORGANIZATION
-    data['call_organization_plural'] = settings.CALL_ORGANIZATION_PLURAL
     data['ial'] = profile.identity_assurance_level
     return JsonResponse(data)
 
@@ -80,10 +68,3 @@ def oidc_userprofile(request):
     data = get_userprofile(user)
     return JsonResponse(data)
 
-
-def get_fhir_id(user):
-    r = None
-    if Crosswalk.objects.filter(user=user).exists():
-        c = Crosswalk.objects.get(user=user, user_id_type="PATIENT_ID_FHIR")
-        r = c.fhir_patient_id
-    return r

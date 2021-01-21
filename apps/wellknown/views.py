@@ -22,6 +22,17 @@ def openid_configuration(request):
     return HttpResponseRedirect(reverse('oauth_authorization_server'))
 
 
+@require_GET
+def smart_configuration(request):
+    """
+    Views that returns openid_configuration.
+    """
+    data = OrderedDict()
+    issuer = base_issuer(request)
+    data = build_endpoint_info_smart(data, issuer=issuer)
+    return JsonResponse(data)
+
+
 def base_issuer(request):
     """
     define the base url for issuer
@@ -50,13 +61,6 @@ def base_issuer(request):
 
 
 def build_endpoint_info(data=OrderedDict(), issuer=""):
-    """
-    construct the data package
-    issuer should be http: or https:// prefixed url.
-
-    :param data:
-    :return:
-    """
     data["issuer"] = issuer
     data["authorization_endpoint"] = issuer + \
         reverse('oauth2_provider:authorize')
@@ -74,11 +78,30 @@ def build_endpoint_info(data=OrderedDict(), issuer=""):
         data["grant_types_supported"].append(i[0])
     data["grant_types_supported"].append("refresh_token")
     data["response_types_supported"] = ["code", "token"]
-    data['call_member'] = settings.CALL_MEMBER
-    data['call_member_plural'] = settings.CALL_MEMBER
-    data['call_organization'] = settings.CALL_ORGANIZATION
-    data['call_organization_plural'] = settings.CALL_ORGANIZATION_PLURAL
 
-    # data["fhir_metadata_uri"] = issuer + \
-    #    reverse('fhir_conformance_metadata')
+    # Not part of spec but provides
+    # information on what to call users and orgs in the server's context.
+    data['person_title'] = settings.CALL_MEMBER
+    data['person_title_plural'] = settings.CALL_MEMBER_PLURAL
+    data['organization_title'] = settings.CALL_ORGANIZATION
+    data['organization_title_plural'] = settings.CALL_ORGANIZATION_PLURAL
+    if settings.FHIR_BASE_URI:
+        data["fhir_uri"] = settings.FHIR_BASE_URI
+    if settings.OPERATIONAL_MODALITY:
+        data["operational_modality"] = settings.OPERATIONAL_MODALITY
+
+    return data
+
+
+def build_endpoint_info_smart(data=OrderedDict(), issuer=""):
+    data["authorization_endpoint"] = issuer + \
+        reverse('oauth2_provider:authorize')
+    data["token_endpoint"] = issuer + \
+        reverse('oauth2_provider:token')
+    data["revocation_endpoint"] = issuer + reverse("oauth2_provider:revoke-token")
+    data["introspection_endpoint"] = issuer + reverse("oauth2_provider:introspect")
+    data["registration_endpoint"] = issuer + reverse("registration_endpoint"),
+    data["response_types_supported"] = ["code", "token"]
+    data['scopes_supported'] = ["openid", "profile", "fhirUser", "patient/*.read", "offline_access"],
+    data['capabilities'] = ["launch-standalone", ],
     return data

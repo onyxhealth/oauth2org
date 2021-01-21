@@ -6,7 +6,7 @@ from jwkest.jwt import JWT
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-
+from django.conf import settings
 # Copyright Videntity Systems Inc.
 
 __author__ = "Alan Viars"
@@ -35,7 +35,6 @@ def id_token_payload_json(request):
 def authenticated_home(request):
     name = _('Authenticated Home')
     if request.user.is_authenticated:
-
         # Get the ID Token and parse it.
         try:
             vmi = request.user.social_auth.filter(
@@ -54,7 +53,6 @@ def authenticated_home(request):
             # redirect to get verified
             messages.warning(request, 'Your identity has not been verified. \
                              This must be completed prior to access to Personal Health Information.')
-
         try:
             profile = request.user.userprofile
         except Exception:
@@ -65,10 +63,10 @@ def authenticated_home(request):
                    'id_token': id_token,
                    'id_token_payload': parsed_id_token}
 
-        template = 'authenticated-home.html'
+        template = settings.HOMEPAGE_AUTHENTICATED_TEMPLATE
     else:
         name = ('home')
         context = {'name': name}
-        template = 'index.html'
+        template = settings.HOMEPAGE_TEMPLATE
 
     return render(request, template, context)
