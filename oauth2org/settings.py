@@ -98,7 +98,6 @@ INSTALLED_APPS = [
     # 'apps.adt', # Accept ADT/x12 message stream and build identifier responses.
 
 
-
     # Enterprise feature apps enabled for developers and testing
     # Provider_directory is an in-house API based on MongoDB. (under active development)
     'apps.provider_directory',  # this application demonstrates the power
@@ -109,7 +108,7 @@ INSTALLED_APPS = [
     # Therese are all generally required unless noted otherwise.
     # Running only some of these may result in errors and/or abnormal behavior.
     'oauth2_provider',  # Django OAuth Toolkit (DoT) . Must come after 'apps.dot_ext'.
-    'waffle',  # feature toggle.
+    'waffle',  # a feature toggle.
     'rest_framework',  # REST Framework.  You can create APIs with this too!
     'widget_tweaks',  # UI lib
     'corsheaders',    # CORS Headers
@@ -653,6 +652,11 @@ LOGGING = {
     },
 }
 
+
+LOGIN_RATELIMIT = env('LOGIN_RATELIMIT', '100/h')
+
+# Hide the location of the admin. Diabled by default.
+ADMIN_REDIRECTOR = env('ADMIN_REDIRECTOR', '')
 
 # Djmongo settings.  DjMongo is optional for the OAuth2orfg project.
 # It is a tool for building APIs that suupport CSV and JSON.

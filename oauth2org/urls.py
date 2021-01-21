@@ -22,7 +22,8 @@ admin.site.site_title = "OAuth2/FHIR/SMART Server Admin Portal"
 admin.site.index_title = "Oauth2org: OAuth2/FHIR/SMART Server Site Administration"
 
 
-ADMIN_PATH = "%sadmin/" % (ADMIN_REDIRECTOR)
+ADMIN_PATH = "%sadmin/" % (settings.ADMIN_REDIRECTOR)
+
 
 urlpatterns = [
     path(ADMIN_PATH, admin.site.urls),  # make the admin URL a shared secret in production.

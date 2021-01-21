@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from oauth2_provider.models import Application
+from oauth2_provider.models import get_application_model
 from django.contrib.auth import get_user_model
 from collections import OrderedDict
 import json
@@ -8,7 +8,9 @@ import uuid
 __author__ = "Alan Viars"
 # Copyright Videntity Systems, Inc
 
+
 User = get_user_model()
+Application = get_application_model()
 
 
 def delete_app(client_id):
