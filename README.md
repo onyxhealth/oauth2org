@@ -84,9 +84,17 @@ Create a superuser (Optional)
 
     python manage.py create_super_user_from_envars
 
-    
-Create a Sample Application (So the test Client application  will work as expected.)
 
+Create default Groups.
+
+
+    python manage.py create_default_groups
+
+(Please note that in order for users to register apps, they need to be added to the developer group.
+This may be accomplished in the admin or programatically.
+
+    
+Create the sampe `TestApp` application, so the test Client application  will work as expected.)
 
     python manage.py create_test_application
 
@@ -98,20 +106,24 @@ For example your `.env` file may contain the following lines:
      export SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_SECRET="oauth2org-dsjkfj87234ndsh89r3b434y8dTWocG"
      export SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_OIDC_ENDPOINT="http://verifymyidentity:8000"
 
-If running this server and the OIDC server locally lom the same machine for development,
-we recommend setting up names for each server host in `/etc/hosts`.
-You might add lines like the following to that file:
+You may also use other upsteam identity providers such as Ping or Okta. See Python Social Auth documentation.)
+
+If you are a developer running `oauth2org` server and the `vmi` OpenID Connect server locally on the same machine for development,
+we recommend setting up hostnames locally for each server host. 
+In your  `/etc/hosts` file. you might add lines like the following to that file:
 
 
-     127.0.0.1       smhapp
-     127.0.0.1       verifymyidentity
-     127.0.0.1       oauth2org
+    127.0.0.1       oauth2org
+    127.0.0.1       verifymyidentity
 
-In development our convention is to run `vmi` on port `8000`, `sharemyhealth` on 8001, and `smh_app` on `8002`.
-To start this server on port 8001 issue the following command.
+In development tye convention is to run `vmi` on port `8000` and `oauth2org` on `8001`. Any 3rd party apps on `8002`, etc.......
+To start this server on port `8001` issue the following command.
 
 
      python manage.py runserver 8001
+
+
+.....then point your browser to http://oauth2org:8001 or http://localhost:8001
 
 
 Advanced Connectivity Topics
@@ -135,17 +147,15 @@ using OAuth2 client credentials grant type.
 
 Connecting to InterSystems  Health Information Exchange (HIE)
 -------------------------------------------------------------
-
-
 This OAuth2 Provider can connect to an InterSystems-based backend. The `hie` app gets a CCDA(XML) document,
 converts it to FHIR (JSON), and then serve it as a consumer-facing API via OAuth2.  If your organization is
 interested in using this feature, please contact us.
 
 
 
-## Deploy with Docker
-
-Docker is supported. It will also configure a postgreSQL docker instance on 
+Deploy with Docker
+------------------
+Docker is supported. These instructions will configure a postgreSQL docker instance on 
 port **5432**.
 
 Run docker with:
@@ -158,20 +168,14 @@ docker-compose with the --build option.
 If you're working with a fresh db image the migrations have 
 to be run.
 
-## Associated Projects
+Associated Projects
+===================
 
-[ShareMyHealth App](https://github.com/TransparentHealth/smh_app) is 
-a personal health records for aggregating and sharing data with 
-organizations.
+[VerifyMyIdentity - vmi](https://github.com/videntity/vmi)
+Out of the box, `oauth2org` comes configured to act as a relying party to VerifyMyIdentity (a.k.a. `vmi`).
 
-oauth2org acts as a relying party to 
-[vmi](https://github.com/TransparentHealth/vmi).
 
-[VerifyMyIdentity - VMI](https://github.com/TransparentHealth/vmi), 
-a standards-focused OpenID Connect Identity Provider.
+`vmi` is an open source, standards-based, OpenID Connect Identity Provider (IdP) with rich and extensible claim support. Some of the claims/fields supported by `vmi` that yuou may care about include `ial`, `aal`, `vot`  `vtm`,  `amr`, `sex`, `gender` `date_of_birth`, `document`, and `verified_claims`, `person_to_person`.  `vmi` has an extensible authorization framework. `vmi` may connect to an upstream identity provider such as Ping, Okta, or Google. It may also connect to a direcotry (e.g. LDAP/ActiveDirectory) or for account information such as username and password validation. `vmi` may also be used in a stand alone mode.  
 
-## Supporting Resources
 
-vmi uses css resources from Bootstrap (v.3.3.x) and 
-Font-Awesome (v4.4.x). 
 
