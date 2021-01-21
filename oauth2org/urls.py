@@ -7,7 +7,6 @@ from django.contrib.auth import views as auth_views
 from apps.home.views import authenticated_home
 from oauth2_provider import views
 from apps.hie.decorators import check_ial_before_allowing_authorize
-from django.conf import settings
 # from django.views.generic import TemplateView
 # from . import signals  # noqa
 from .utils import IsAppInstalled
