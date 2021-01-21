@@ -6,15 +6,18 @@ from django.contrib.auth import views as auth_views
 from apps.home.views import authenticated_home
 from oauth2_provider import views
 from apps.hie.decorators import check_ial_before_allowing_authorize
+from django.conf import settings
 # from django.views.generic import TemplateView
 # from . import signals  # noqa
 from .utils import IsAppInstalled
 
 __author__ = "Alan Viars"
 
-admin.site.site_header = "OAuth2 and FHIR Server Admin"
-admin.site.site_title = "OAuth2 and FHIR Server Admin Portal"
-admin.site.index_title = "Oauth2org: OAuth2 and FHIR Server Site Administration"
+admin.site.site_header = "OAuth2org"
+admin.site.site_title = "OAuth2/FHIR/SMART Server Admin Portal"
+admin.site.index_title = "Oauth2org: OAuth2/FHIR/SMART Server Site Administration"
+
+ADMIN_PATH = "%sadmin/" % (settings.ADMIN_REDIRECTOR)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

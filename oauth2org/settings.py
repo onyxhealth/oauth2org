@@ -69,15 +69,29 @@ INSTALLED_APPS = [
     'apps.api',  # Dummy CDA App
     # 'apps.fhirproxy', # Used for Microsoft Azure backend.
     # 'apps.hie', Intersystems HIE support is not activated by default.
-    'apps.provider_directory',
+    # 'apps.fhirproxy', # Used for Microsoft Azure backend. Not enabled by default.
+    # 'apps.adt', # Accept ADT/x12 message stream and build identifier responses.
+    # 'apps.appman',  # Manage Apps in Azure B2C instead of Django OAuth Toolkit.
+
+
+    # Enterprise feature apps enabled for developers and testing
+    # Provider_directory is an in-house API based on MongoDB. (under active development)
+    'apps.provider_directory',  # this application demonstrates the power
+    # An in-house Patient facing API that is based in MongoDB. (under active development)
     'apps.patientface_api',
     # 'apps.adt',
 
-    # 3rd Party ---------------------------------------------------
-    'widget_tweaks',
-    'corsheaders',
-    'bootstrapform',
-    'social_django',  # Python Social Auth
+    # 3rd Party Python/django libraries managed by others ---------------------------
+    # Therese are all generally required unless noted otherwise.
+    # Running only some of these may result in errors and/or abnormal behavior.
+    'oauth2_provider',  # Django OAuth Toolkit (DoT) . Must come after 'apps.dot_ext'.
+    'waffle',  # a feature toggle.
+    'rest_framework',  # REST Framework.  You can create APIs with this too!
+    'widget_tweaks',  # UI lib
+    'corsheaders',    # CORS Headers
+    'bootstrapform',  # generate bootstrap forms
+    # Python Social Auth. # Python Social Auth is used to communicate to an upsteam Identity Provider (IdP)
+    'social_django',  # VerifyMyIdentity is the default configuration, but other OIDC  IdPs are supported such as Okta and Google.
 ]
 
 # Add djmongo if it is already installed.
@@ -563,3 +577,6 @@ PROVIDER_DIRECTORY_SEARCH_LIMIT = int(env(
     'PROVIDER_DIRECTORY_SEARCH_LIMIT', "3"))
 
 LOGIN_RATELIMIT = env('LOGIN_RATELIMIT', '100/h')
+
+# Hide the location of the admin. Diabled by default.
+ADMIN_REDIRECTOR = env('ADMIN_REDIRECTOR', '')
