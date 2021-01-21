@@ -36,7 +36,7 @@
      <li>expires_at: {{token_response.expires_at}}  </li>
      <li>expires_in: {{token_response.expires_in}}  </li>
      <li>scope: {{token_response.scope}}  </li>
-     <li>FHIR patient_id: {{userinfo.patient}} </li>
+     <li>FHIR patient_id: {{request.user.userprofile.fhir_patient_id}} </li>
      <li>given_name: {{request.user.first_name}}  </li>
      <li>family_name: {{request.user.last_name }}   </li>
 					
@@ -51,7 +51,7 @@ After they expire you will need to go through Authorization process again.
 
      <ul>
      <li>FHIR Patient Resource 
-					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'fhir_endpoint_with_id_oauth' 'Patient' userinfo.patient %}"</pre>
+					<pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'fhir_endpoint_with_id_oauth' 'Patient' request.user.userprofile.fhir_patient_id %}"</pre>
 					</li>
 					
   

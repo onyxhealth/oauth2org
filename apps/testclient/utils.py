@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from django.conf import settings
-from oauth2_provider.models import Application
-# from ..dot_ext.models import Application
+from oauth2_provider.models import get_application_model
+Application = get_application_model()
 
 
 def test_setup(include_client_secret=True):

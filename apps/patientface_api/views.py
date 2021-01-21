@@ -7,7 +7,8 @@ from oauth2_provider.decorators import protected_resource
 from .models import Crosswalk
 from .mongo_utils import query_mongo
 from bson import ObjectId
-
+from .metadata import patient_facing_api_metadata_str
+import json
 __author__ = "Alan Viars"
 
 
@@ -27,6 +28,11 @@ FHIR_RESOURCE_TO_ID_MAP['Device'] = "patient"
 FHIR_RESOURCE_TO_ID_MAP['Goal'] = "patient"
 FHIR_RESOURCE_TO_ID_MAP['ExplanationOfBenefit'] = "patient"
 FHIR_RESOURCE_TO_ID_MAP['Coverage'] = ""
+
+
+@require_GET
+def fhir_metadata_endpoint(request):
+    return JsonResponse(json.loads(patient_facing_api_metadata_str, object_pairs_hook=OrderedDict))
 
 
 @require_GET
@@ -90,6 +96,3 @@ def patient_search_not_allowed_response():
         ('diagnostics', 'Patient search is not allowed on this server'),
     ))
     return oo_response
-
-
-

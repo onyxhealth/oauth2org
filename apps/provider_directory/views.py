@@ -30,7 +30,7 @@ def fhir_read(request, fhir_resource_type, id):
                                   'InsurancePlan'):
         raise Http404
 
-    q = query_mongo(database_name="fhir4",
+    q = query_mongo(database_name=settings.PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME,
                     collection_name=fhir_resource_type,
                     query={'id': id})
     if q['results']:
@@ -52,6 +52,10 @@ def practitioner_fhir_search(request):
         query['address.state'] = query['address-state'].upper()
         del query['address-state']
 
+    if 'address-city' in query.keys():
+        query['address.city'] = query['address-city'].upper()
+        del query['address-city']
+
     if 'family' in query.keys():
         query['name.family'] = query['family'].upper()
         del query['family']
@@ -71,6 +75,10 @@ def practitioner_fhir_search(request):
     if 'communication-coding-code' in query.keys():
         query['communication.coding.code'] = query['communication-coding-code']
         del query['communication-coding-code']
+
+    if 'location' in query.keys():
+        query['location.reference'] = "Location/%s" % (query['location'])
+        del query['location']
 
     if '_id' in query.keys():
         query['id'] = query['_id']
@@ -143,6 +151,14 @@ def organization_fhir_search(request):
     if 'location' in query.keys():
         query['location.reference'] = "Location/%s" % (query['location'])
         del query['location']
+
+    if 'address-postalcode' in query.keys():
+        query['address.postalCode'] = query['address-postalcode']
+        del query['address-postalcode']
+
+    if 'address-state' in query.keys():
+        query['address.state'] = query['address-state'].upper()
+        del query['address-state']
 
     q = query_mongo(database_name=settings.PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME,
                     collection_name="Organization",
