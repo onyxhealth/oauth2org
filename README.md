@@ -73,7 +73,8 @@ See the `settings.py` and for a full list.  Below are some basic variable you ma
 Just add the above to a `.env` and then do a 'source .env' to make the changes take effect.
 See https://docs.djangoproject.com/en/2.2/topics/settings/ for all the details about Django settings.
 
-Create the database:
+
+Create the database of your choice.  (Default is SqLite). Override the setting in your env to create/point to  the DB you desire.:
 
 
     python manage.py migrate
@@ -96,6 +97,7 @@ This may be accomplished in the admin or programatically.
     
 Create the sampe `TestApp` application, so the test Client application  will work as expected.)
 
+
     python manage.py create_test_application
 
 Be Sure to register this application in the OIDC Server and then set the values in your `.env`.
@@ -110,13 +112,14 @@ You may also use other upsteam identity providers such as Ping or Okta. See Pyth
 
 If you are a developer running `oauth2org` server and the `vmi` OpenID Connect server locally on the same machine for development,
 we recommend setting up hostnames locally for each server host. 
-In your  `/etc/hosts` file. you might add lines like the following to that file:
+In your  `/etc/hosts` file, you might add lines like the following:
 
 
     127.0.0.1       oauth2org
     127.0.0.1       verifymyidentity
 
-In development tye convention is to run `vmi` on port `8000` and `oauth2org` on `8001`. Any 3rd party apps on `8002`, etc.......
+
+The convention is to run `vmi` on port `8000` and `oauth2org` on `8001`. Any 3rd party apps on `8002`, etc.......
 To start this server on port `8001` issue the following command.
 
 
@@ -127,10 +130,10 @@ To start this server on port `8001` issue the following command.
 
 
 Advanced Connectivity Topics
-=============================
+============================
 
 
-Connecting to a Backend FHIR service
+Connecting to a Backend FHIR service via the ``
 ------------------------------------
 
 The following settings illustrate how you can connect to an existing FHIR backend service (such as Microsoft Azure)
@@ -176,6 +179,3 @@ Out of the box, `oauth2org` comes configured to act as a relying party to Verify
 
 
 `vmi` is an open source, standards-based, OpenID Connect Identity Provider (IdP) with rich and extensible claim support. Some of the claims/fields supported by `vmi` that yuou may care about include `ial`, `aal`, `vot`  `vtm`,  `amr`, `sex`, `gender` `date_of_birth`, `document`, and `verified_claims`, `person_to_person`.  `vmi` has an extensible authorization framework. `vmi` may connect to an upstream identity provider such as Ping, Okta, or Google. It may also connect to a direcotry (e.g. LDAP/ActiveDirectory) or for account information such as username and password validation. `vmi` may also be used in a stand alone mode.  
-
-
-
