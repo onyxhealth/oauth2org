@@ -9,6 +9,9 @@ from .mongo_utils import query_mongo
 from bson import ObjectId
 from .metadata import patient_facing_api_metadata_str
 import json
+from ..accounts.models import UserProfile
+
+
 __author__ = "Alan Viars"
 
 
@@ -42,15 +45,23 @@ def fhir_endpoint_with_id(request, fhir_resource, id):
     if fhir_resource not in settings.FHIR_RESOURCES_SUPPORTED:
         raise Http404
 
-    cw = Crosswalk.objects.get(
-        user=request.resource_owner, user_id_type="PATIENT_ID_FHIR")
-
-    if cw.fhir_patient_id != id and fhir_resource == "Patient":
+    up = UserProfile.objects.get(user=request.resource_owner) 
+    if up.fhir_patient_id != id and fhir_resource == "Patient":
         # Do not allow mismatched token/user/fhir ID
         raise Http404
 
-    d = query_mongo("qhn-fhir4", fhir_resource,
-                    query={"id": cw.fhir_patient_id}, limit=1)
+    d = query_mongo("qhn-fhir4", fhir_resource, query={"id": id}, limit=1)
+
+    if not d["results"]:
+        d = query_mongo("qhn-fhir4", fhir_resource, query={"id": ObjectId(id)}, limit=1)
+    
+    if not d["results"]:
+        d = query_mongo("qhn-fhir4", fhir_resource, query={"_id": id}, limit=1) 
+
+    if not d["results"]:
+        d = query_mongo("qhn-fhir4", fhir_resource, query={"_id": ObjectId(id)}, limit=1) 
+    if not d["results"]:
+        raise Http404
     one_result = d["results"][0]
 
     if "_id" in one_result.keys():

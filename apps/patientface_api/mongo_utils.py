@@ -82,7 +82,6 @@ def query_mongo(
 
     mylist = []
     response_dict = {}
-    print("QUERRY", query)
     try:
         mongodb_client_url = getattr(
             settings, 'MONGODB_CLIENT', 'mongodb://localhost:27017/')
@@ -94,7 +93,6 @@ def query_mongo(
         # Cast the query to integers
         if cast_strings_to_integers:
             query = cast_number_strings_to_integers(query)
-        print("QUERRY2", query)
         # print query
         if return_keys:
             return_dict = {}
