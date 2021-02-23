@@ -70,7 +70,7 @@ def build_endpoint_info(data=OrderedDict(), issuer=""):
         reverse('user_profile')
     data["revocation_endpoint"] = issuer + reverse("oauth2_provider:revoke-token")
     data["introspection_endpoint"] = issuer + reverse("oauth2_provider:introspect")
-    data["registration_endpoint"] = issuer + reverse("registration_endpoint"),
+    data["registration_endpoint"] = issuer + reverse("registration_endpoint")
     data["ui_locales_supported"] = ["en-US", ]
     data["op_tos_uri"] = settings.TOS_URI
     data["grant_types_supported"] = []
@@ -100,8 +100,8 @@ def build_endpoint_info_smart(data=OrderedDict(), issuer=""):
         reverse('oauth2_provider:token')
     data["revocation_endpoint"] = issuer + reverse("oauth2_provider:revoke-token")
     data["introspection_endpoint"] = issuer + reverse("oauth2_provider:introspect")
-    data["registration_endpoint"] = issuer + reverse("registration_endpoint"),
+    data["registration_endpoint"] = issuer + reverse("registration_endpoint")
     data["response_types_supported"] = ["code", "token"]
-    data['scopes_supported'] = ["openid", "profile", "fhirUser", "patient/*.read", "offline_access"],
-    data['capabilities'] = ["launch-standalone", ],
+    data['scopes_supported'] = ["openid", "profile", "fhirUser", "patient/*.read", "offline_access"]
+    data['capabilities'] = ["launch-standalone", ]
     return data
