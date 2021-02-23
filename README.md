@@ -86,13 +86,13 @@ Create a superuser (Optional)
     python manage.py create_super_user_from_envars
 
 
-Create default Groups.
+Create default Groups.  This will create the groups `ApplicationDeveloper` and `DynamicClientRegistrationProtocol`.
 
 
     python manage.py create_default_groups
 
-(Please note that in order for users to register apps, they need to be added to the developer group.
-This may be accomplished in the admin or programatically.
+(Please note that in order for users to register apps (i.e. clients) in the web interface, they first need 
+added to the `ApplicationDeveloper` group. This may be accomplished in the admin or programatically.  
 
     
 Create the sampe `TestApp` application, so the test Client application  will work as expected.)
@@ -100,7 +100,22 @@ Create the sampe `TestApp` application, so the test Client application  will wor
 
     python manage.py create_test_application
 
-Be Sure to register this application in the OIDC Server and then set the values in your `.env`.
+
+Applications can also be registered via OAuth2 Dynamic client registration protocol.  
+The script `oauth2org_app_register.py`. is a command line utility which calles the registration endpoint.
+Your user needs to be in the `DynamicClientRegistrationProtocol` group in order to use this feature. 
+Do this in the admin.
+
+You man also use the management command (via `manage.py` ) called `register_oauth2_client`.
+
+
+Upstream OIDC Connection
+------------------------
+
+Out of the box this service uses an external OIDC IdP for login.  It is preconfigured for VerifyMyIdentity
+but this can be changed.
+
+Be sure to register this application in the OIDC Server and then set the values in your `.env`.
 For example your `.env` file may contain the following lines:
 
 
@@ -108,7 +123,7 @@ For example your `.env` file may contain the following lines:
      export SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_SECRET="oauth2org-dsjkfj87234ndsh89r3b434y8dTWocG"
      export SOCIAL_AUTH_VERIFYMYIDENTITY_OPENIDCONNECT_OIDC_ENDPOINT="http://verifymyidentity:8000"
 
-You may also use other upsteam identity providers such as Ping or Okta. See Python Social Auth documentation.)
+You may also use other upsteam identity providers such as Ping,Okta, SAML, etc.  See Python Social Auth documentation.
 
 If you are a developer running `oauth2org` server and the `vmi` OpenID Connect server locally on the same machine for development,
 we recommend setting up hostnames locally for each server host. 
@@ -133,7 +148,7 @@ Advanced Connectivity Topics
 ============================
 
 
-Connecting to a Backend FHIR service via the ``
+Connecting to a Backend FHIR service via the `fhirproxy` app.
 ------------------------------------
 
 The following settings illustrate how you can connect to an existing FHIR backend service (such as Microsoft Azure)
