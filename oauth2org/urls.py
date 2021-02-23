@@ -62,12 +62,6 @@ if IsAppInstalled("apps.patientface_api"):
     ]
 
 
-# For apps managed in Microsoft Azure B2C.
-if IsAppInstalled("apps.appman"):
-    urlpatterns += [
-        url(r'^appman/', include('apps.appman.urls')),
-    ]
-
 # For Microsoft Azure FHIR Proxy or HAPI SmileCDR Proxy configutations.
 if IsAppInstalled("apps.apps.fhirproxy"):
     urlpatterns += [

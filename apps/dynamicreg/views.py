@@ -26,17 +26,45 @@ def registration_endpoint(request):
                     user = authenticate(username=uname, password=passwd)
                     if user is not None and user.is_active:
                         if user.groups.filter(name='DynamicClientRegistrationProtocol').exists():
-                            response = register_app(client_id=body['client_id'],
-                                                    client_name=body['client_name'],
-                                                    redirect_uris=' '.join(body['redirect_uris']),
+                            client_id = None
+                            if 'client_id' in body.keys():
+                                client_id = body['client_id']
+                            client_secret = None
+                            if 'client_secret' in body.keys():
+                                client_secret = body['client_secret']
+
+                            skip_authorization = False
+                            if 'skip_authorization' in body.keys():
+                                skip_authorization = body['skip_authorization']
+
+                            client_type = 'confidential'
+                            if 'client_type' in body.keys():
+                                client_type = body['client_type']
+
+                            redirect_uris = []
+                            if 'redirect_uris' in body.keys():
+                                redirect_uris = body['redirect_uris']
+
+                            grant_type = 'authorization_code'
+                            if 'grant_type' in body.keys():
+                                grant_type = body['grant_type']
+                            response = register_app(client_name=body['client_name'],
+                                                    client_id=client_id,
+                                                    client_secret=client_secret,
+                                                    redirect_uris=redirect_uris,
+                                                    client_type=client_type,
+                                                    grant_type=grant_type,
+                                                    skip_authorization=skip_authorization,
                                                     username=user.username)
                             return JsonResponse(response)
                         else:
-                            return JsonResponse({"error": "Not Authorized."})
+                            return JsonResponse({"error": "Insufficient permissions." +
+                                                          "You need to be in the DynamicClientRegistrationProtocol group."})
                     else:
-                        return JsonResponse({"error": "Not Authorized -inactive"})
+                        return JsonResponse({"error": "Authentication Failed." +
+                                                      "You have supplied invalid credentials or your account is inactive."})
     # Request methos is GET:
-    message = "Welcome to OAuth2.org's OAuth 2.0 Dynamic Client Registration Protocol." +\
-              "POST here with proper credentials to register an application." + \
-              "See https://github.com/videntity/vmi/blob/master/apps/dynamicreg/README.md"
+    message = "Welcome to OAuthorg's  OAuth 2.0 Dynamic Client Registration Protocol." +\
+              "POST here with proper credentials to register an application." +\
+              "See https://github.com/Transparenthealth/oauth2org/blob/master/README.md"
     return JsonResponse({"message": message})

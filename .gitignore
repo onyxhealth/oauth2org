@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 wheels/
+media/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -123,3 +124,6 @@ testdata
 /oauth2org.pyproj
 /oauth2org.pyproj.user
 /oauth2org.sln
+oauth2org.code-workspace
+
+
