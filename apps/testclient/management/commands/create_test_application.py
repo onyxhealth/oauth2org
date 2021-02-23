@@ -1,10 +1,13 @@
 
 from django.core.management.base import BaseCommand
-from oauth2_provider.models import Application
+from oauth2_provider.models import get_application_model
 from oauth2_provider.models import AccessToken
 from django.utils import timezone
 from datetime import timedelta
 from django.conf import settings
+
+__author__ = "Alan Viars"
+Application = get_application_model()
 
 
 def create_application():
