@@ -64,7 +64,7 @@ def registration_endpoint(request):
                         return JsonResponse({"error": "Authentication Failed." +
                                                       "You have supplied invalid credentials or your account is inactive."})
     # Request methos is GET:
-    message = "Welcome to Verify My Identity OAuth 2.0 Dynamic Client Registration Protocol." +\
+    message = "Welcome to OAuthorg's  OAuth 2.0 Dynamic Client Registration Protocol." +\
               "POST here with proper credentials to register an application." +\
-              "See https://github.com/videntity/vmi/blob/master/apps/dynamicreg/README.md"
+              "See https://github.com/Transparenthealth/oauth2org/blob/master/README.md"
     return JsonResponse({"message": message})
