@@ -29,7 +29,7 @@ but shares much of the underlying code.  This version was designed for designed 
 Installation
 ------------
 
-This project is based on Python 3.6 and Django 2.2.10. 
+This project is based on Python 3.6 and Django 2.2.18. 
 
 Download the project:
 
