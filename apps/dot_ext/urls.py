@@ -18,10 +18,10 @@ base_urlpatterns = [
 management_urlpatterns = [
     # Application management views
     url(r"^applications/$", oauth2_views.ApplicationList.as_view(), name="list"),
-    url(r"^applications/register/$", views.ApplicationRegistration.as_view(), name="register"),
+    url(r"^applications/register/$", oauth2_views.ApplicationRegistration.as_view(), name="register"),
     url(r"^applications/(?P<pk>[\w-]+)/$", oauth2_views.ApplicationDetail.as_view(), name="detail"),
-    url(r"^applications/(?P<pk>[\w-]+)/delete/$", views.ApplicationDelete.as_view(), name="delete"),
-    url(r"^applications/(?P<pk>[\w-]+)/update/$", views.ApplicationUpdate.as_view(), name="update"),
+    url(r"^applications/(?P<pk>[\w-]+)/delete/$", oauth2_views.ApplicationDelete.as_view(), name="delete"),
+    url(r"^applications/(?P<pk>[\w-]+)/update/$", oauth2_views.ApplicationUpdate.as_view(), name="update"),
     # Token management views
     url(r"^authorized_tokens/$", oauth2_views.AuthorizedTokensListView.as_view(), name="authorized-token-list"),
     url(r"^authorized_tokens/(?P<pk>[\w-]+)/delete/$", oauth2_views.AuthorizedTokenDeleteView.as_view(),
