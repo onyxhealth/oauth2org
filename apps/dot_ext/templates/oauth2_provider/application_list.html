@@ -19,7 +19,9 @@
   <div class="ds-c-alert__body">
     <h3 class="ds-c-alert__heading">{%trans "What is this?" %}</h3>
     <p class="ds-c-alert__text">
-      Here is where application developers register applications and create OAuth2 credentials. If you are not an application developer, perhaps you meant to go to the <a href="{% url 'oauth2_provider:authorized-token-list' %}">application token page</a>.
+      Here is where application developers register applications and create OAuth2 credentials. 
+      If you are not an application developer, perhaps you meant to go to 
+      the <a href="{% url 'oauth2_provider:authorized-token-list' %}">application token page</a>.
     </p>
   </div>
 </div>
@@ -30,7 +32,10 @@
       <ul style="list-style: none">
           {% for application in applications %}
               <li class="ds-u-margin-y--1">
-                <a href="{{ application.get_absolute_url }}">{{ application.name }}</a> | Updated {{application.updated}}
+                <a href="{{ application.get_absolute_url }}">{{ application.name }} ({{ application.client_id }})</a>
+               | <a href="{% url 'oauth2_provider:update' application.id  %}">Update </a>
+               | <a href="{% url 'oauth2_provider:delete' application.id  %}">Delete </a> 
+               Updated {{application.updated}}
               </li>
           {% endfor %}
       </ul>
@@ -40,8 +45,9 @@
 </div>
 
 <!-- New Application Button -->
-<a class="ds-c-button  ds-c-button--default ds-u-margin-y--2" href="{% url "oauth2_provider:register" %}">
+<button type="button" class="btn btn-default"><a  href="{% url "oauth2_provider:register" %}">
   Register New Application
-</a>
+</a></button>
+
 
 {% endblock content %}

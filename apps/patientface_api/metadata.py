@@ -11,7 +11,7 @@ patient_facing_api_metadata_str =\
 	"name": "oauth2org-patient-facing-api",
 	"status": "draft",
 	"date": "2021-01-18",
-	"publisher": "Transparent Health",
+	"publisher": "Videntity",
 	"contact": [{
 		"telecom": [{
 			"system": "url",
