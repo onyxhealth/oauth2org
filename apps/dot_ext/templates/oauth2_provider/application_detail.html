@@ -42,61 +42,60 @@
               <h2 class="ds-u-margin-bottom--2">App Credentials</h2>
             
               <div class="bb-c-card sandbox-app-card">
-                <!-- Application Credentials -->
-                <form class="app-credentials">
-                  <span class="copy-confirmation" id="confirm-id-{{ application.client_id }}" aria-live="assertive" aria-role="alert">ID Copied to Clipboard</span>
-                  <span class="copy-confirmation" id="confirm-secret-{{ application.client_id }}" aria-live="assertive" aria-role="alert">Secret Copied to Clipboard</span>
-                  <a class="app-credentials-toggle" id="{{ application.client_id }}" tabindex="0">Show/Hide Credentials</a>
-                  <label for"id-{{ application.client_id }}">Client ID</label>
-                  <input type="password" value="{{ application.client_id }}" id="id-{{ application.client_id }}" onclick="copyCredential(this.id)" />
-                  <label for"secret-{{ application.client_secret }}">Client Secret</label>
-                  <input type="password" value="{{ application.client_secret }}" id="secret-{{ application.client_id }}" onclick="copyCredential(this.id)" />
-                </form>
+
               </div>
             
               <!-- Required App Info Section -->
               <h2 class="ds-u-margin-bottom--2 ds-u-margin-top--4">App Details - Required Information</h2>
             
               <div class="bb-c-card full-width-card">
-                      
+           
+                    <!-- Client NAme -->
+                    <div class="ds-u-margin-bottom--2">
+                    <p class="ds-u-font-weight--bold ds-u-margin-bottom--1">OAuth2 - {% trans "Client Name" %}</p>
+                    <pre>{{ application.name }}</pre>
+                    </div>
+                
+
+                     <!-- Client ID -->
+                     <div class="ds-u-margin-bottom--2">
+                     <p class="ds-u-font-weight--bold ds-u-margin-bottom--1">OAuth2 - {% trans "Client ID" %}</p>
+                     <pre>{{ application.client_id }}</pre>
+                    </div>
+
+                 <!-- Client Secret -->
+                <div class="ds-u-margin-bottom--2">
+                  <p class="ds-u-font-weight--bold ds-u-margin-bottom--1">OAuth2 - {% trans "Client Secret" %}</p>
+                  <pre>{{ application.client_secret }}</pre>
+                </div>
+                
+
                 <!-- Client Type -->
                 <div class="ds-u-margin-bottom--2">
-                  <p class="ds-u-font-weight--bold ds-u-margin-bottom--1">OAuth - {% trans "Client Type" %}</p>
+                  <p class="ds-u-font-weight--bold ds-u-margin-bottom--1">OAuth2 - {% trans "Client Type" %}</p>
                   <pre>{{ application.client_type }}</pre>
                 </div>
                       
                 <!-- Grant Type -->
                 <div class="ds-u-margin-bottom--2">
-                  <p class="ds-u-font-weight--bold ds-u-margin-bottom--1">OAuth - {% trans "Grant Type" %}</p>
+                  <p class="ds-u-font-weight--bold ds-u-margin-bottom--1">OAuth2 - {% trans "Grant Type" %}</p>
                   <pre>{{ application.authorization_grant_type }}</pre>
                 </div>
                       
                 <!-- Redirect URIs -->
                 <div class="ds-u-margin-bottom--2">
-                  <p class="ds-u-font-weight--bold ds-u-margin-bottom--1">Callback URLS / {% trans "Redirect Uris" %}</p>
+                  <p class="ds-u-font-weight--bold ds-u-margin-bottom--1">OAuth2 - {% trans "Redirect URIs" %}</p>
                   <pre>{{ application.redirect_uris }}</pre>
                 </div>
 
-                <!-- Demographic Filter -->
-                <div class="ds-u-margin-bottom--2">
-                  <p class="ds-u-font-weight--bold ds-u-margin-bottom--1">Does my application need to collect beneficary demographic data?</p>
-                  <p class="ds-u-margin-bottom--1">
-                    <i>(Name, address, date of birth, race, and gender)</i>
-                  </p>
-                  {% if application.require_demographic_scopes is False %}
-                    <pre>No</pre>
-                  {% else %}
-                    <pre>Yes</pre>
-                  {% endif %}
-                </div>
+
                       
               </div>
             
               <!-- Optional App Info Section -->
               <h2 class="ds-u-margin-bottom--2 ds-u-margin-top--4">App Details - Optional Information</h2>
             
-              <p class="ds-u-margin-bottom--2">This information can be used to more fully emulate elements of having an application in production. <strong>This information is only used for sample purposes.</strong> For example, you can enter your website or privacy policy to simulate what a Medicare beneficiary would see when authorizing your application.</p>
-                      
+                  
               <div class="bb-app-optional-information-card">
             
                 <div class="info-card-left">

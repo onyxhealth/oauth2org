@@ -33,7 +33,6 @@ urlpatterns = [
     url(r'^home/', include('apps.home.urls')),
     url(r"^o/authorize/$",
         check_ial_before_allowing_authorize(views.AuthorizationView.as_view()), name="authorize"),
-    url(r'^fhir/', include('apps.fhir.bluebutton.urls')),
     url(r'o/', include('apps.dot_ext.urls')),
     # url(r'^/o/', include('apps.authorization.urls')),
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
@@ -77,7 +76,7 @@ if IsAppInstalled("apps.hie"):
 
 if IsAppInstalled("djmongo"):
     urlpatterns += [
-       # url(r'^djm/', include('djmongo.urls')),
+       url(r'^djm/', include('djmongo.urls')),
     ]
 
 if IsAppInstalled("apps.adt"):

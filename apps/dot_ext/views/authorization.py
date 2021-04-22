@@ -8,11 +8,9 @@ from oauth2_provider.views.base import RevokeTokenView as DotRevokeTokenView
 from oauth2_provider.models import get_application_model
 from oauth2_provider.exceptions import OAuthToolkitError
 from apps.dot_ext.scopes import CapabilitiesScopes
-
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
-
 from urllib.parse import urlparse, parse_qs
 from ..signals import beneficiary_authorized_application
 from ..forms import SimpleAllowForm

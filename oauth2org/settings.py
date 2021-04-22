@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from collections import OrderedDict
 import dj_database_url
 from django.contrib.messages import constants as messages
 from getenv import env
@@ -69,40 +70,43 @@ INSTALLED_APPS = [
     # Set the MONGODB_CLIENT setting for your environment.
 
 
-    # Required Inhouse apps. These are generally necessary for expected Oauth2 provider behavior.
+    # Required apps, These are generally necessary for expected Oauth2 Provider behavior.
     # Running only some of these may result in errors and/or abnormal behavior.
-
     # This is the core sublassing of Django OAuth Toolkit (DoT)'s abstract classes.
-    # SMART_ON_FHIR customizations are here .
     'apps.dot_ext.apps.dot_extConfig',  # Reference to 'apps.dot_ext'. This minor deviation added for an import workaround.
     'apps.accounts',  # For basic account management.
     'apps.home',  # Home screen
-    'apps.dynamicreg',  # Dynamic Client Reg Protocol
     'apps.wellknown',  # /.well-known/ URLs
     'apps.verifymyidentity',  # Upstream Identity provider
     'apps.testclient',  # Tests the Patient Facing API by functioning as a client (3rd party app).
-
-    # Oauth2 Provider specific apps.  These must all be active for a patient-facing config.
     'apps.authorization',  # Core
-    'apps.fhir.bluebutton',  # Core Crosswalk table for HAPI-based backend.
     'apps.capabilities',  # DoT Extensions for scopes
-    'apps.pkce',  # PKCE support. TODO move in/to DoT.
+    'apps.pkce',  # PKCE support. TODO move into DOT.
+    # Dynamic client reg is optional
+    'apps.dynamicreg',  # Dynamic Client Reg Protocol
+
+    # Enterprise feature apps enabled enabled by default.
+
+    # Provider_directory is an public FHIR API based on MongoDB. It supports FHIR JSON, JSON, and CSV.
+    'apps.provider_directory',
+    # An FHIR Patient facing API that uses MongoDB as its backend. It supports FHIR JSON.
+    'apps.patientface_api',
 
 
     # Enterprise feature apps not enabled by default
-    # These are advanced features for enterprise customers. These are not enabled.
-    # by default.
-    # 'apps.api',  # CDA API App is not enabled by default.
+    # These are advanced features for enterprise customers.
+
+
+    # 'apps.healthcards',      # SMART Health Card implemenatation.
     # 'apps.hie', Intersystems HIE support is not activated by default.
-    # 'apps.fhirproxy', # Used for Microsoft Azure backend. Not enabled by default.
+    # 'apps.api',  # CDA API App is used in conjection with a  CDA source such as an HIE.
+    # 'apps.fhirproxy', # A patient-facing API proxy using HAPI, Smile CDR, or Microsoft FHIR Server.
+
+    # Accept ADT/x12 message stream and build identifier responses. (Experimental, but stable.)
     # 'apps.adt', # Accept ADT/x12 message stream and build identifier responses.
 
 
-    # Enterprise feature apps enabled for developers and testing
-    # Provider_directory is an in-house API based on MongoDB. (under active development)
-    'apps.provider_directory',  # this application demonstrates the power
-    # An in-house Patient facing API that is based in MongoDB. (under active development)
-    'apps.patientface_api',
+
 
     # 3rd Party Python/django libraries managed by others ---------------------------
     # Therese are all generally required unless noted otherwise.
@@ -115,6 +119,7 @@ INSTALLED_APPS = [
     'bootstrapform',  # generate bootstrap forms
     # Python Social Auth. # Python Social Auth is used to communicate to an upsteam Identity Provider (IdP)
     'social_django',  # VerifyMyIdentity is the default configuration, but other OIDC  IdPs are supported such as Okta and Google.
+
 ]
 
 # Add Djmongo if it is already installed.
@@ -391,9 +396,8 @@ POLICY_TITLE = env('DJANGO_POLICY_TITLE', 'Privacy Policy')
 TOS_URI = env('DJANGO_TOS_URI',
               'https://example.com/terms-of-service-1.0.html')
 TOS_TITLE = env('DJANGO_TOS_TITLE', 'Terms of Service')
-TAG_LINE_1 = env('DJANGO_TAG_LINE_1', 'Share your health data')
-TAG_LINE_2 = env('DJANGO_TAG_LINE_2',
-                 'with applications, organizations, and people you trust.')
+TAG_LINE_1 = env('DJANGO_TAG_LINE_1', '')
+TAG_LINE_2 = env('DJANGO_TAG_LINE_2', '')
 USER_DOCS_URI = env(
     'USER_DOCS_URI', "https:/github.com/TransparentHealth/oauth2org")
 USER_DOCS_TITLE = "User Documentation"
@@ -432,9 +436,29 @@ PROTECTED_RESOURCE_TITLE = env(
     'PROTECTED_RESOURCE_TITLE',
     'read-only access to your personal health information')
 
+# For Patient FACING API:Regardless of what is in MongoDB, allow these.
+FHIR_PATIENT_API_RESOURCES_SUPPORTED = (
+    'Patient',
+    'Practitioner',
+    'Organization',
+    'Observation',
+    'Condition',
+    'Medication',
+    'MedicationStatement',
+    'MedicationOrder',
+    'AllergyIntolerance',
+    'DiagnosticReport',
+    'Procedure',
+    'CarePlan',
+    'Immunization',
+    'Device',
+    'Goal',
+    'Coverage',
+    'ExplanationOfBenefit')
 
 SETTINGS_EXPORT = [
     'DEBUG',
+    'FHIR_PATIENT_API_RESOURCES_SUPPORTED',
     'HOSTNAME_URL',
     'ALLOWED_HOSTS',
     'APPLICATION_TITLE',
@@ -468,53 +492,41 @@ SETTINGS_EXPORT = [
     'DATA_SOURCE_TITLE_SHORT',
     'TOP_LEFT_TITLE',
     'KILLER_APP_URI',
-    'FHIR_BASE_URI',
 ]
 
 
 # These settings are for connection to InterSystems APIs for Health Information Exchange (HIE)
-# These settings are not used if you have an actual FHIR server like HAPI
-# or Microsoft.
-
-HIE_TOKEN_API_URI = env('HIE_TOKEN_API_URI',
-                        'https://integration.example.com:6443/')
-HIE_PATIENT_API_URI = env('HIE_PATIENT_API_URI',
-                          'https://integration.example.com:5443')
+# These settings are exclusive from FHIR settings. The HIE interface is not installed by default and
+# implemenations may ignore these settings.
+HIE_TOKEN_API_URI = env('HIE_TOKEN_API_URI', 'https://integration.example.com:6443/')
+HIE_PATIENT_API_URI = env('HIE_PATIENT_API_URI', 'https://integration.example.com:5443')
 HIE_PHRREGISTER_API_URI = "%s/PHRREGISTER" % (HIE_PATIENT_API_URI)
-HIE_ACTIVATESTAGEDUSER_API_URI = "%s/ACTIVATESTAGEDUSER" % (
-    HIE_PATIENT_API_URI)
-HIE_CONSUMERDIRECTIVE_API_URI = "%s/CONSUMERDIRECTIVE" % (
-    HIE_PATIENT_API_URI)
+HIE_ACTIVATESTAGEDUSER_API_URI = "%s/ACTIVATESTAGEDUSER" % (HIE_PATIENT_API_URI)
+HIE_CONSUMERDIRECTIVE_API_URI = "%s/CONSUMERDIRECTIVE" % (HIE_PATIENT_API_URI)
 HIE_GETDOCUMENT_API_URI = "%s/GETDOCUMENT" % (HIE_PATIENT_API_URI)
 HIE_WORKBENCH_USERNAME = env('HIE_WORKBENCH_USERNAME', '')
 HIE_WORKBENCH_PASSWORD = env('HIE_WORKBENCH_PASSWORD', '')
 HIE_BASIC_AUTH_PASSWORD = env('HIE_BASIC_AUTH_PASSWORD', '')
 HIE_BASIC_AUTH_USERNAME = env('HIE_BASIC_AUTH_USERNAME', '')
-
 HIE_CLIENT_CERT = env('HIE_CLIENT_CERT', """
 -----BEGIN CERTIFICATE-----
-replace with your cert or set the env var.
+replace with your cert or set in the env var.
 -----END CERTIFICATE-----""")
-
 HIE_CLIENT_PRIVATE_KEY = env('HIE_CLIENT_PRIVATE_KEY', """
 -----BEGIN PRIVATE KEY-----
-replace with your private key or set the env var.
+replace with your private key or set in the env var.
 -----END PRIVATE KEY-----
 """)
-
-
 HIE_CLIENT_CERT_FILEPATH = env('HIE_CLIENT_CERT_FILEPATH', 'client-cert.pem')
 HIE_CLIENT_PRIVATE_KEY_FILEPATH = env(
     'HIE_CLIENT_PRIVATE_KEY_FILEPATH', 'client-private-key.pem')
 
-# Default setting for rate limit.
+# Default rate limit on the login screen and other sensitive URL.
 LOGIN_RATELIMIT = env('LOGIN_RATELIMIT', '100/h')
 
 # CDA2FHIR is an add-on, optional component, to this project.
 # See https://github.com/TransparentHealth/cda2fhir-service
-
-
-# is use to convert Intersystems CDA. At the time of this writing
+# is used to convert Intersystems CDA. At the time of this writing
 # Intersystems doesn't have a usable FHIR interface.
 # Again not used if you have an actual FHIR server like HAPI or Microsoft.
 # Should be operated behind a firewall and in ssl/https in production.
@@ -522,7 +534,7 @@ LOGIN_RATELIMIT = env('LOGIN_RATELIMIT', '100/h')
 CDA2FHIR_SERVICE = env('CDA2FHIR_SERVICE', 'http://cda2fhirservice.example.com')
 CDA2FHIR_SERVICE_URL = "%s/api/convert" % (CDA2FHIR_SERVICE)
 
-# End of InterSystems HIE setting
+# ----------------- End of HIE interface settings
 
 
 # Expire in 30 minutes
@@ -533,35 +545,41 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_SAMESITE = None
 
 
-# Proxy HAPI or other FHIR Server
+# Proxy HAPI Microsoft FHIR, etc.  These settings are for the "bluebutton"or other FHIR Server
 # FHIR Server to Proxy (Default) - with trailing slash on HAPI
 
 DEFAULT_FHIR_SERVER = env('DEFAULT_FHIR_SERVER',
-                          "http://hapi.example.com:8080/fhir/baseDstu3/")
+                          "http://hapi.example.com:8080/fhir/baseDstu4/")
 
-DEFAULT_FHIR_URL_PREFIX = env('DEFAULT_FHIR_URL_PREFIX', "/fhir/baseDstu3")
+DEFAULT_FHIR_URL_PREFIX = env('DEFAULT_FHIR_URL_PREFIX', "/proxy/v1/fhir4/baseDstu4")
 # Proxied requests will have these URLs swapped.
 DEFAULT_OUT_FHIR_SERVER = HOSTNAME_URL + DEFAULT_FHIR_URL_PREFIX
 
-# For Patient FACING API: Regardless of FHIR backend support, only support these.
-FHIR_RESOURCES_SUPPORTED = (
-    'Patient',
+
+# For PUBLIC PROVIDER  FACING API: Regardless of what is in MongoDB, allow these.
+FHIR_PROVIDER_DIRECTORY_API_RESOURCES_SUPPORTED = (
     'Practitioner',
     'Organization',
-    'Observation',
-    'Condition',
-    'Medication',
-    'MedicationStatement',
-    'MedicationOrder',
-    'AllergyIntolerance',
-    'DiagnosticReport',
-    'Procedure',
-    'CarePlan',
-    'Immunization',
-    'Device',
-    'Goal',
-    'Coverage',
-    'ExplanationOfBenefit')
+    'Location',
+)
+
+
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP = OrderedDict()
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['Patient'] = ""
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['Observation'] = "subject"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['Condition'] = "subject"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['AllergyIntolerance'] = "patient"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['Medication'] = ""
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['MedicationStatement'] = "patient"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['MedicationOrder'] = ""
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['DiagnosticReport'] = "patient"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['Procedure'] = "patient"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['CarePlan'] = "patient"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['Immunization'] = "patient"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['Device'] = "patient"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['Goal'] = "patient"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['ExplanationOfBenefit'] = "patient"
+FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['Coverage'] = ""
 
 
 # Backend FHIR server client credentials
@@ -664,7 +682,7 @@ ADMIN_REDIRECTOR = env('ADMIN_REDIRECTOR', '')
 # It's UI is accessed by going to http://localhost:8000/djm
 # If False, only show all DBs. If true show DB's with matching group.
 
-DJMONGO_DB_GROUPS = bool_env(env('DJMONGO_DB_GROUPS', True))
+DJMONGO_DB_GROUPS = bool_env(env('DJMONGO_DB_GROUPS', False))
 # This set the database connection for all of the Djmongo tools.
 MONGODB_CLIENT = env('MONGODB_CLIENT', 'mongodb://localhost:27017/')
 
@@ -673,17 +691,14 @@ MONGODB_CLIENT = env('MONGODB_CLIENT', 'mongodb://localhost:27017/')
 # Each MongoDB Collection within the database has the name of the FHIR Resource.
 # Practitioner, Organization, Etc.
 # Djmongo is not required for this application to function but it is still
-# reccomended as a management tool.
-PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME = env('PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME', "fhir4")
 
+PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME = env('PROVIDER_DIRECTORY_MONGODB_DATABASE_NAME', "fhir4")
 # Limit the PD search results bu this number
 PROVIDER_DIRECTORY_SEARCH_LIMIT = int(env('PROVIDER_DIRECTORY_SEARCH_LIMIT', "3"))
+PROVIDER_DIRECTORY_FHIR_BASE_URI = HOSTNAME_URL + env('PATIENT_ACCESS_FHIR_BASE_URI', "/provider-directory/fhir/R4/")
 
-# Running Patient facing APIs and public APIs on the
-# same host or instance of this software is not supported and not reccomended.
-OPERATIONAL_MODALITY = "patient-access-api"  # Either Other values can be PROVIDER-DIRECTORY-PUBLIC-API
-
-FHIR_BASE_URI = HOSTNAME_URL + env('FHIR_BASE_URI', "/patient-api/fhir/R4/")
+PATIENT_ACCESS_MONGODB_DATABASE_NAME = env('PATIENT_ACCESS_MONGODB_DATABASE_NAME', "fhir4")
+PATIENT_ACCESS_FHIR_BASE_URI = HOSTNAME_URL + env('PATIENT_ACCESS_FHIR_BASE_URI', "/patient-facing-api/fhir/v1/R4/")
 
 # Whitelable branding and styling.  These settings allow you to further brand the project for your user.
 

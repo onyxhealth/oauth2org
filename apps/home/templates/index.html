@@ -24,24 +24,30 @@
 
                 
                 <div class="col-lg-12 well">
-                  
-
-                    
-                    
-                
                     <h2>Welcome to {{ settings.APPLICATION_TITLE }}</h2>
                     <br><br>
-                    
-                   
-                <h4>Application Programming Interfaces (APIs)</h4>
-                 <br>
-                <p>These APIs are configured for this instance.</p>
-                 <br><br>
+                
+
+                <h4>Patient/Member/Beneficary FHIR Application Programming Interfaces (APIs)</h4>
+                <p>Thes APIs allow access to patient data either by exact FHIR reference or by search.
+                The test client below is. Please <a href="mailto:sales@videntity.com?subject=OAuth2.org-Inquiry">contact us</a> 
+                for sample patient accounts or developer accounts.
+                </p> 
+                
+                <a href="{% url 'test_links' %}"><button type="button" class="btn btn-primary"> <i class="fa fa-user"></i> Member/Patient Test Client</button></a>   
+                </p>
                 <ul>
-                <li>FHIR Patient Resource | <a href="https://www.hl7.org/fhir/patient.html">docs</a>
-                               <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'fhir_endpoint_with_id_oauth' 'Patient' 'some-fhir-patient-id' %}"</pre>
-                               </li>
-                               
+
+                {% for r in settings.FHIR_PATIENT_API_RESOURCES_SUPPORTED %}
+                <li>FHIR {{r}} Resource By ID
+                    <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'patient_facing_fhir_endpoint_with_id_oauth' r 'some-fhir-resource-id' %}"</pre>
+                </li>
+                
+                <li>FHIR {{r}} Search
+                    <pre>curl -H "Authorization: Bearer some-user-bound-token" "{{settings.HOSTNAME_URL}}{% url 'patient_facing_fhir_endpoint_search_oauth' r  %}?patient=some-patient-fhir-id"</pre>
+                </li>
+                {% endfor %}
+
            
                 <li>OAuth2 Discovery | <a href="https://tools.ietf.org/html/rfc8414">docs</a>
                                <pre>curl "{{settings.HOSTNAME_URL}}{% url 'oauth_authorization_server' %}"</pre>

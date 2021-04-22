@@ -12,19 +12,19 @@ Application = get_application_model()
 class MyAccessToken(AccessToken):
     class Meta:
         proxy = True
-        app_label = "bluebutton"
+        app_label = "dot_ext"
 
 
 class MyApplication(Application):
     class Meta:
         proxy = True
-        app_label = "bluebutton"
+        app_label = "dot_ext"
 
 
 class MyAuthFlowUuid(AuthFlowUuid):
     class Meta:
         proxy = True
-        app_label = "bluebutton"
+        app_label = "dot_ext"
 
 
 class CustomAdminApplicationForm(CustomRegisterApplicationForm):
