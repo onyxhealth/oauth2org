@@ -436,9 +436,29 @@ PROTECTED_RESOURCE_TITLE = env(
     'PROTECTED_RESOURCE_TITLE',
     'read-only access to your personal health information')
 
+# For Patient FACING API:Regardless of what is in MongoDB, allow these.
+FHIR_PATIENT_API_RESOURCES_SUPPORTED = (
+    'Patient',
+    'Practitioner',
+    'Organization',
+    'Observation',
+    'Condition',
+    'Medication',
+    'MedicationStatement',
+    'MedicationOrder',
+    'AllergyIntolerance',
+    'DiagnosticReport',
+    'Procedure',
+    'CarePlan',
+    'Immunization',
+    'Device',
+    'Goal',
+    'Coverage',
+    'ExplanationOfBenefit')
 
 SETTINGS_EXPORT = [
     'DEBUG',
+    'FHIR_PATIENT_API_RESOURCES_SUPPORTED',
     'HOSTNAME_URL',
     'ALLOWED_HOSTS',
     'APPLICATION_TITLE',
@@ -542,25 +562,7 @@ FHIR_PROVIDER_DIRECTORY_API_RESOURCES_SUPPORTED = (
     'Organization',
     'Location',
 )
-# For Patient FACING API:Regardless of what is in MongoDB, allow these.
-FHIR_PATIENT_API_RESOURCES_SUPPORTED = (
-    'Patient',
-    'Practitioner',
-    'Organization',
-    'Observation',
-    'Condition',
-    'Medication',
-    'MedicationStatement',
-    'MedicationOrder',
-    'AllergyIntolerance',
-    'DiagnosticReport',
-    'Procedure',
-    'CarePlan',
-    'Immunization',
-    'Device',
-    'Goal',
-    'Coverage',
-    'ExplanationOfBenefit')
+
 
 FHIR_PATIENT_API_RESOURCE_TO_ID_MAP = OrderedDict()
 FHIR_PATIENT_API_RESOURCE_TO_ID_MAP['Patient'] = ""

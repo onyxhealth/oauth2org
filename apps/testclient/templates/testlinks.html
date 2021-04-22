@@ -29,17 +29,14 @@
 
 
 <body class="ds-base">
- <h1>API Test Page</h1>
- 
- <p>These calls require a token to be attached to your session.  The
-test redirect_uri callback function {% url 'testclient-callback' %} will do this for you.
- Use this <a href="{% url 'authorize_link' %}">sample Authorization flow</a> to set the token, then come back here to make the calls.
- Calls requiring an access token will fail unless the above step is completed.
+ <h1>OAuth2.org Test Client</h1>
+ <h2><a href="{% url 'authorize_link' %}">Test Client AuthorizationFlow</a></h2>
+
+
+ <p> Use this <a href="{% url 'authorize_link' %}">sample Authorization flow</a> to get an access_token. Upon success you will be redirected 
+    to a page listing working API calls using curl.
  </p>
-     <h1>API Calls</h1>
-     <ul>
-     <li> <a target="_blank" href="{% url 'oauth_authorization_server' %}">Discovery </a>(No Token Needed) </li>
-     </ul>
+
     
 </body>
 

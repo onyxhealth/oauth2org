@@ -78,18 +78,6 @@ def build_endpoint_info(data=OrderedDict(), issuer=""):
         data["grant_types_supported"].append(i[0])
     data["grant_types_supported"].append("refresh_token")
     data["response_types_supported"] = ["code", "token"]
-
-    # Not part of spec but provides
-    # information on what to call users and orgs in the server's context.
-    data['person_title'] = settings.CALL_MEMBER
-    data['person_title_plural'] = settings.CALL_MEMBER_PLURAL
-    data['organization_title'] = settings.CALL_ORGANIZATION
-    data['organization_title_plural'] = settings.CALL_ORGANIZATION_PLURAL
-    if settings.FHIR_BASE_URI:
-        data["fhir_uri"] = settings.FHIR_BASE_URI
-    if settings.OPERATIONAL_MODALITY:
-        data["operational_modality"] = settings.OPERATIONAL_MODALITY
-
     return data
 
 

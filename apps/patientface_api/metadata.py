@@ -10,7 +10,7 @@ patient_facing_api_metadata_str =\
 	},
 	"name": "oauth2org-patient-facing-api",
 	"status": "draft",
-	"date": "2021-01-18",
+	"date": "2021-04-22",
 	"publisher": "Videntity",
 	"contact": [{
 		"telecom": [{
