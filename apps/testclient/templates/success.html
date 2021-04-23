@@ -26,21 +26,22 @@
 
 
 <body class="ds-base">
- <h1>OAuth2 Test Client Success!</h1> 
+ <h1>{{ settings.APPLICATION_TITLE }} (OAuth2.org) Test Client</h1> 
  
 
  
 
-    <h2>The OAuth2 access_token was granted. Here are some details.</h2>
+    <h2>Success! The OAuth2 access_token was granted. Here are some details.</h2>
      <ul>
-     <li>access_token: {{token_response.access_token}}  </li>
-     <li>token_type:  {{token_response.token_type}}   </li>
-     <li>expires_at: {{token_response.expires_at}}  </li>
-     <li>expires_in: {{token_response.expires_in}}  </li>
-     <li>scope: {{token_response.scope}}  </li>
-     <li>FHIR patient_id: {{request.user.userprofile.fhir_patient_id}} </li>
-     <li>given_name: {{request.user.first_name}}  </li>
-     <li>family_name: {{request.user.last_name }}   </li>
+     <li><label>given_name:</label> {{request.user.first_name}}  </li>
+     <li><label>family_name: </label>{{request.user.last_name }} </li>
+     <li><label>access_token:</label> {{token_response.access_token}}  </li>
+     <li><label>token_type:</label>  {{token_response.token_type}}   </li>
+     <li><label>expires_at:</label> {{token_response.expires_at}}  </li>
+     <li><label>expires_in:</label> {{token_response.expires_in}}  </li>
+     <li><label>scope:</label>scope: {{token_response.scope}}  </li>
+     <li><label>FHIR patient_id:</label> {{request.user.userprofile.fhir_patient_id}} </li>
+
 					
      </ul>
     
@@ -52,15 +53,25 @@
           <li>User Profile
                <pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'user_profile' %}"</pre>
           </li>
-
-          {% for r in settings.FHIR_PATIENT_API_RESOURCES_SUPPORTED %}
-          <li>FHIR {{r}} Resource By ID
-              <pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'patient_facing_fhir_endpoint_with_id_oauth' r request.user.userprofile.fhir_patient_id %}"</pre>
-          </li>
           
-          <li>FHIR {{r}} Search
-              <pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'patient_facing_fhir_endpoint_search_oauth' r  %}?patient={{request.user.userprofile.fhir_patient_id}}"</pre>
-          </li>
+          {% for r in settings.FHIR_PATIENT_API_RESOURCES_SUPPORTED %}
+          
+               {% if r == 'Patient' %}
+                    <li>Get FHIR FHIR Resource Patient by id
+                         <pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'patient_facing_fhir_endpoint_with_id_oauth' r request.user.userprofile.fhir_patient_id %}"</pre>
+                    </li> 
+               {% endif %}
+
+               {% if r != 'Patient' %}
+                    <li>Search for {{r}} FHIR Resources 
+                         <pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'patient_facing_fhir_endpoint_search_oauth' r  %}?patient={{request.user.userprofile.fhir_patient_id}}"</pre>
+                    </li>
+                    
+                    <li>GET a {{r}} FHIR Resource by id
+                    <pre>curl -H "Authorization: Bearer {{token_response.access_token}}" "{{settings.HOSTNAME_URL}}{% url 'patient_facing_fhir_endpoint_with_id_oauth' r 'some-fhir-resource-id' %}"</pre>
+                    </li>
+               {% endif %}
+
           {% endfor %}
 
      <li>FHIR Metadata (No token needed)

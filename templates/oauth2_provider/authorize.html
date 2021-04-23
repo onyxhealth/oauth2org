@@ -1,27 +1,38 @@
-{% extends "oauth2_provider/base.html" %}
+{% extends "base.html" %}
 
 {% load i18n %}
-{% block content %}
-    <div class="block-center">
-        {% if not error %}
-            <form id="authorizationForm" method="post">
-                <h2>Approve access for {{ application.name }}?</h2>
+{% block Content %}
 
-                <p>Do you, <strong>{{request.user.first_name|title }} {{request.user.last_name|title }}</strong>, approve
-                <strong>{{ application.name }}</strong> for <strong>{{settings.PROTECTED_RESOURCE_TITLE}}</strong> from the
-                <strong>{{ settings.DATA_SOURCE_TITLE }}</strong>?
-                </p>
+<style>
+    .box {
+        height: 825px;
+        width: 500px;
+        border: 1px solid gray;
+        padding: 10px 10px 10px 10px;
+
+    }
+    </style>  
+
+
+<div class="container">
+    <div class="row">
+        <div class="center-block bg-default box">
+            
+            {% if not error %}
+            <form id="authorizationForm" method="post">
+
+                <h3>Do you, <strong>{{request.user.first_name|title }} {{request.user.last_name|title }}</strong>, approve
+                <strong>{{ application.name }}</strong> for <strong>{{settings.PROTECTED_RESOURCE_TITLE}}</strong>?
+                </h3>
                 
                 <h4 style="color:red;">Understand the Risks:</h4>
 
                 <p>
-                    You have the right to share your health information, but there may be risks. Be sure to review the Patient Data Access from  {{ settings.DATA_SOURCE_TITLE }}'s
-                    Privacy Policy and Terms and Conditions. You can revoke (cancel) {{ application.name }}'s access to your data at any time
+                    You have the right to share your health information with {{ application.name }}, but you should be comfortable with this sharing and assume any risks.
+                    Review {{ application.name }}'s <a herf="{{ application.op_tos_uri }}">Privacy Policy</a> and the <a href="{{ application.op_policy_uri }}">Terms and Conditions</a>. 
+                    You can revoke {{ application.name }}'s access to your data at any time
                     by logging in to this site and selecting "Revoke" from the Application Access Tokens menu item.
-                    You can also cancel your Share My Health account, which will stop {{ application.name }}'s access to your health information held by {{ settings.DATA_SOURCE_TITLE }}.
-                    When you allow Patient Data Access from {{ settings.DATA_SOURCE_TITLE }} you and any social service
-                    providers you approve receive {{settings.PROTECTED_RESOURCE_TITLE}}.
-                    While you may revoke access at any time, it is not possible to take back information already shared.
+                    While you may revoke further access by {{ application.name }} at any time, it is not possible to take back information already shared with {{ application.name }}.
                 </p>
                 
                             
@@ -38,22 +49,20 @@
                     <li>Alcohol and substance abuse treatment information</li>
                 </ul>
 
-                
-                <p>Please note that {{ settings.DATA_SOURCE_TITLE }} has only <i>some</i> of your personal health information. {{ settings.DATA_SOURCE_TITLE }} personal health information is not your official or complete medical record.</p>
-                  
+
                 <h4>By clicking "Approve" you also:</h4>
                 
                 
                 <p></p>
 
                 <ul>
-                    <li>Are confirming that you are connecting your data to {{ application.name }} by your own choice. You should only approve access to applications you trust.</li>
-                    <li>Agree that {{ settings.DATA_SOURCE_TITLE }} is not responsible for any misuse of personal health information by the application you are approving.</li>
-                    <li>Understand once information is shared in cannot be unshared. {{ settings.DATA_SOURCE_TITLE }} is unable to retract information shared with this application.</li>
+                    <li>Are confirming that you are connecting your data to {{ application.name }} by your own choice.</li>
+                    <li>Agree that we are not responsible for any misuse of personal health information by the application you are approving.</li>
+                    <li>Understand the we cannot retract information already shared with {{ application.name }}.</li>
                     <li>Understand that future data sharing with this application must be explicitly revoked (cancelled) by you by returning to this website or by revoking access
                     at {{ application.name }}.</li>
                     <li>Understand that {{ application.name }} application and the social service organizations that it shares your health information with
-                    are likely not covered by the privacy and security protections of <a href="https://www.hhs.gov/hipaa/index.html">HIPAA</a>.</li>
+                    may not be covered by the privacy and security protections of <a href="https://www.hhs.gov/hipaa/index.html">HIPAA</a>.</li>
                 </ul>
 
                 <div class="control-group">
@@ -78,11 +87,17 @@
                 {{ form.non_field_errors }}
 
             </form>
+        
+        
+        </div>
+    
+    </div>
+</div>
 
         {% else %}
             <h2>Error: {{ error.error }}</h2>
             <p>{{ error.description }}</p>
         {% endif %}
 
-    </div>
+
 {% endblock %}
