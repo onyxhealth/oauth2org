@@ -97,9 +97,9 @@ INSTALLED_APPS = [
     # These are advanced features for enterprise customers.
 
 
-    # 'apps.healthcards',      # SMART Health Card implemenatation.
+    # 'apps.healthcards',      # SMART Health Card implementation.
     # 'apps.hie', Intersystems HIE support is not activated by default.
-    # 'apps.api',  # CDA API App is used in conjection with a  CDA source such as an HIE.
+    # 'apps.api',  # CDA API App is used in conjunction with a  CDA source such as an HIE.
     # 'apps.fhirproxy', # A patient-facing API proxy using HAPI, Smile CDR, or Microsoft FHIR Server.
 
     # Accept ADT/x12 message stream and build identifier responses. (Experimental, but stable.)
@@ -117,7 +117,7 @@ INSTALLED_APPS = [
     'widget_tweaks',  # UI lib
     'corsheaders',    # CORS Headers
     'bootstrapform',  # generate bootstrap forms
-    # Python Social Auth. # Python Social Auth is used to communicate to an upsteam Identity Provider (IdP)
+    # Python Social Auth. # Python Social Auth is used to communicate to an upstream Identity Provider (IdP)
     'social_django',  # VerifyMyIdentity is the default configuration, but other OIDC  IdPs are supported such as Okta and Google.
 
 ]
@@ -497,7 +497,7 @@ SETTINGS_EXPORT = [
 
 # These settings are for connection to InterSystems APIs for Health Information Exchange (HIE)
 # These settings are exclusive from FHIR settings. The HIE interface is not installed by default and
-# implemenations may ignore these settings.
+# implementations may ignore these settings.
 HIE_TOKEN_API_URI = env('HIE_TOKEN_API_URI', 'https://integration.example.com:6443/')
 HIE_PATIENT_API_URI = env('HIE_PATIENT_API_URI', 'https://integration.example.com:5443')
 HIE_PHRREGISTER_API_URI = "%s/PHRREGISTER" % (HIE_PATIENT_API_URI)
@@ -599,21 +599,21 @@ BACKEND_FHIR_TOKEN_ENDPOINT = env('BACKEND_FHIR_TOKEN_ENDPOINT',
 # Change if using AWS and in another region.
 AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION', 'us-east-1')
 
-# Blank means skip the EC2 Paramer store. Default behavior is to rely on
+# Blank means skip the EC2 Parameter store. Default behavior is to rely on
 # local instance's environment variables. The project should read on a .env
-# file from the proijects's root directory. Many ways to accomplish this
+# file from the project's root directory. Many ways to accomplish this
 # including with Docker, Gunicorn startup, and others.  If you are not using
 # EC2 Parameter store, you can ignore this setting.
 EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES = env(
     'EC2PARAMSTORE_4_ENVIRONMENT_VARIABLES', "EC2_PARAMSTORE")
 
 
-# Loggin options.
-# VPC values gets added to the loggin format.
+# Login options.
+# VPC values gets added to the login format.
 # This helps identify your nodes/workers.
 VPC_ENV = env('VPC_ENV', "UNKNOWN")
 
-# Role Type  gets added to the loggin format.
+# Role Type  gets added to the login format.
 # This helps identify the role of your workers.
 ROLE_TYPE = env('ROLE_TYPE', "NOT_SET")
 
@@ -676,8 +676,8 @@ LOGIN_RATELIMIT = env('LOGIN_RATELIMIT', '100/h')
 # Hide the location of the admin. Diabled by default.
 ADMIN_REDIRECTOR = env('ADMIN_REDIRECTOR', '')
 
-# Djmongo settings.  DjMongo is optional for the OAuth2orfg project.
-# It is a tool for building APIs that suupport CSV and JSON.
+# Djmongo settings.  DjMongo is optional for the OAuth2org project.
+# It is a tool for building APIs that support CSV and JSON.
 # Djmongo works with OAuth2org.
 # It's UI is accessed by going to http://localhost:8000/djm
 # If False, only show all DBs. If true show DB's with matching group.
@@ -700,11 +700,11 @@ PROVIDER_DIRECTORY_FHIR_BASE_URI = HOSTNAME_URL + env('PATIENT_ACCESS_FHIR_BASE_
 PATIENT_ACCESS_MONGODB_DATABASE_NAME = env('PATIENT_ACCESS_MONGODB_DATABASE_NAME', "fhir4")
 PATIENT_ACCESS_FHIR_BASE_URI = HOSTNAME_URL + env('PATIENT_ACCESS_FHIR_BASE_URI', "/patient-facing-api/fhir/v1/R4/")
 
-# Whitelable branding and styling.  These settings allow you to further brand the project for your user.
+# Whitelabel branding and styling.  These settings allow you to further brand the project for your user.
 
 # These set the main homepage when a user is not authenticated.
 HOMEPAGE_TEMPLATE = env('HOMEPAGE_TEMPLATE', "index.html")
-# Replace this template to change what your user see's when logged in.
+# Replace this template to change what your user sees when logged in.
 HOMEPAGE_AUTHENTICATED_TEMPLATE = env('HOMEPAGE_AUTHENTICATED_TEMPLATE', "authenticated-home.html")
 
 # Change this template to brand and style your login or to change the upstream Identity provider.

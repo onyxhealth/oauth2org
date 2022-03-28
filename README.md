@@ -1,20 +1,20 @@
 # oauth2org - An OAuth2 Provider (Server) and FHIR Proxy with "Batteries Included"
 
-The OAuth2org project is a "batteries included", reusable OAuth2 Server and FHIR Proxy. It is written in Django 2/3  and Python 3. It uses the Django OAuth Toolkit as its base.
+The OAuth2org project is a "batteries included", reusable OAuth2 Server and FHIR Proxy. It is written in Django 2/3 and Python 3. It uses the Django OAuth Toolkit as its base.
 
 Here is some of what you can do:
 
 * Build B2C and B2B APIs.
-* User Authorization Portal - A customizable member/user authorization screen where they agree to share x,y,z with with appliaction ABC Wizbang.  
+* User Authorization Portal - A customizable member/user authorization screen where they agree to share x,y,z with application ABC Wizbang.  
 * A proxy for other APIs via OAuth2.
-* A proxy FHIR sever for HAPI, SmileCDR, Microsoft/Azure FHIR, or tother FHIR Server.
+* A proxy FHIR sever for HAPI, SmileCDR, Microsoft/Azure FHIR, or other FHIR Server.
 * A Developer Portal - Register and manage applications (OAuth2 Clients)
-* An OpenID Connect Relying Party: Connect this service to an upstream OpendID Connect Provider or other account system. OAuth2org has built in support for VerifyMyIdentity, Okta, and Google.
-* Connect a Health Infortmation Exchange(HIE). Built in support for InterSystems is pre-installed.
+* An OpenID Connect Relying Party: Connect this service to an upstream OpenID Connect Provider or other account system. OAuth2org has built in support for VerifyMyIdentity, Okta, and Google.
+* Connect a Health Information Exchange(HIE). Built in support for InterSystems is pre-installed.
 * Ingest HL7 v2/ ADT Messages and automatically create APIs.
 * Build MongoDB-based APIs, without writing any code, using the pre-installed Djmongo plugin app.  
 * Build whatever you want! You can build virtually any RESTful API or app
-on top of this base project. Use Django REST Framework or write your own from scatch.
+on top of this base project. Use Django REST Framework or write your own from scratch.
 
 Project History
 ---------------
@@ -23,7 +23,7 @@ This tool is based off of work done on behalf of the
 Office of the National Coordinator for Health Information
 Technology (HHS ONC) and the  Centers for Medicare and Medicaid
 Services (HHS CMS). It is a "hard fork" of the CMS Blue Button 2.0 API,
-but shares much of the underlying code.  This version was designed for designed for re-use by  EHRs, insurance companies, states, HIEs, etc.)
+but shares much of the underlying code.  This version was designed for re-use by  EHRs, insurance companies, states, HIEs, etc.)
 
 
 Installation
@@ -33,18 +33,21 @@ This project is based on Python 3.6 and Django 2.2.18.
 
 Download the project:
 
-
     git clone https://github.com/TransparentHealth/oauth2org.git
-   
 
-Install supporting libraries. (Consider using virtualenv for your python setup).
+An updated version of this project is based on Python 3.10 (3.10.4) and Django 2.2.26 | 3.2.12.
 
+    git clone https://github.com/onyxhealth/oauth2org.git
+
+
+Install supporting libraries. (Consider using virtualenv in ./v_env folder for your python setup).
 
     cd oauth2org
+    source ./v_env/bin/activate
     pip install -r requirements.txt
 
 Depending on your local environment you made need some supporting libraries
-for the above command to run cleanly. For example you need a 
+for the above command to run cleanly. For example, you need a 
 compiler and python-dev.
 
 Setup some local environment variables. 
@@ -135,8 +138,12 @@ In your  `/etc/hosts` file, you might add lines like the following:
 
 
 The convention is to run `vmi` on port `8000` and `oauth2org` on `8001`. Any 3rd party apps on `8002`, etc.......
-To start this server on port `8001` issue the following command.
 
+Update etc/hosts to add:
+
+    127.0.0.1   oauth2org
+
+To start this server on port `8001` issue the following command.
 
      python manage.py runserver 8001
 
